@@ -1,0 +1,55 @@
+{
+  "title": "Computational Minimality Certificate for 1-NN Separation Search",
+  "status": "computational_evidence_only",
+  "not_a_proof": true,
+  "source_outputs": {
+    "task_007": {
+      "path": "H:\\2026try\\5.13\\outputs\\witnesses\\1nn_separation_witnesses.json",
+      "sha256": "5b7a8925688a353159a31c60b7c9579f506a46448382ed1ca9d345e2c2ffa0d1"
+    },
+    "task_008": {
+      "path": "H:\\2026try\\5.13\\outputs\\witnesses\\1nn_tie_free_witnesses.json",
+      "sha256": "a52aa8a77a9a416b44875740da923da03cb7d19c07974fb3617dca609ce1f12b"
+    }
+  },
+  "search_ranges": {
+    "task_007_vertex_range": "1 to 4",
+    "task_008_vertex_range": "1 to 4"
+  },
+  "observed_no_solution_ranges": {
+    "task_007": [
+      1
+    ],
+    "task_008": [
+      1
+    ]
+  },
+  "observed_minimal_vertex_counts": {
+    "task_007": 2,
+    "task_008": 2
+  },
+  "counts_by_vertices": {
+    "task_007": {
+      "1": 0,
+      "2": 4,
+      "3": 48,
+      "4": 2016
+    },
+    "task_008": {
+      "1": 0,
+      "2": 4,
+      "3": 48,
+      "4": 2016
+    }
+  },
+  "reproducibility_commands": [
+    "conda run -p E:\\anaconda3\\envs\\pytorch-clean python experiments/search_minimal_1nn.py --max_vertices 4",
+    "E:\\anaconda3\\envs\\pytorch-clean\\python.exe experiments/search_tie_free.py --input outputs/witnesses/1nn_separation_witnesses.json --output outputs/witnesses/1nn_tie_free_witnesses.json",
+    "conda run -p E:\\anaconda3\\envs\\pytorch-clean python experiments/certify_minimality.py"
+  ],
+  "assumptions": [
+    "All certificate statements are restricted to the searched spaces recorded in the source outputs.",
+    "The sample contains each graph vertex exactly once in the searched witness tasks.",
+    "Computational evidence is not a theorem-level minimality proof."
+  ]
+}

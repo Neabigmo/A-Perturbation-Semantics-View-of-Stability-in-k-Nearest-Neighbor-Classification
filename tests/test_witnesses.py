@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from experiments.certify_minimality import build_certificate
 from experiments.search_minimal_1nn import build_metadata, search_witnesses
 from knn_stability.enumeration import (
     enumerate_binary_labelings,
@@ -251,3 +252,15 @@ def test_filter_tie_free_witnesses() -> None:
     assert stats["tie_free_witnesses"] == 1
     assert stats["rejected_tie_witnesses"] == 1
     assert len(tie_free_witnesses) == 1
+
+
+def test_build_minimality_certificate() -> None:
+    certificate = build_certificate(
+        Path("outputs/witnesses/1nn_separation_witnesses.json"),
+        Path("outputs/witnesses/1nn_tie_free_witnesses.json"),
+    )
+
+    assert certificate["status"] == "computational_evidence_only"
+    assert certificate["not_a_proof"] is True
+    assert certificate["observed_minimal_vertex_counts"]["task_007"] == 2
+    assert certificate["observed_minimal_vertex_counts"]["task_008"] == 2
