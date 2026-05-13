@@ -1,0 +1,65 @@
+
+
+The TASK-008 implementation is complete. Here's the structured report:
+
+---
+
+## TASK-008: Search Tie-Free Witnesses - Complete
+
+### Search Space
+| Parameter | Value |
+|-----------|-------|
+| Graph type | connected simple undirected labeled graphs |
+| Vertex range | 1 to 4 |
+| Sample constraint | each graph vertex appears exactly once (no duplicates) |
+| Labelings | all binary labelings |
+| Orderings | all permutations of vertex set |
+| k parameter | 1 |
+
+### Tie-Free Condition Definition
+- **Condition**: For every prediction used in accepted LOO and replace-one witness records, the relevant query point has a unique nearest sample occurrence
+- **Applies to**:
+  - Original sample before perturbation
+  - Perturbed sample after LOO deletion or replace-one replacement
+
+### Filter Results
+| Metric | Value |
+|--------|-------|
+| Total witnesses from TASK-007 | 2068 |
+| Tie-free witnesses | 202 |
+| Rejected (had distance ties) | 1866 |
+| Rejection rate | 90.2% |
+
+### Witness Distribution by Vertex Count
+- 2 vertices: 2 witnesses
+- 3 vertices: 8 witnesses
+- 4 vertices: 192 witnesses
+
+### Minimal Witness Status
+- **Minimal tie-free vertex count**: 2
+- **TASK-007 minimal vertex count**: 2
+- **TASK-007 minimal witnesses survived**: ✓ True
+
+### Reproducibility
+```bash
+python experiments/search_tie_free.py \
+  --input outputs/witnesses/1nn_separation_witnesses.json \
+  --output outputs/witnesses/1nn_tie_free_witnesses.json
+```
+
+### Validation
+- All 162 tests passed ✓
+- New tests added for tie-free functionality:
+  - `test_adjacency_from_dict`
+  - `test_has_unique_nearest_simple`
+  - `test_has_unique_nearest_duplicate_points`
+  - `test_verify_tie_free_loo`
+  - `test_verify_tie_free_loo_false_on_original`
+  - `test_verify_tie_free_replace_one`
+  - `test_check_witness_tie_free_accepts_minimal`
+  - `test_filter_tie_free_witnesses`
+
+### Key Findings
+1. **90.2% of TASK-007 witnesses relied on distance ties** in at least one prediction used in the accepted LOO or replace-one records
+2. **The minimal 2-vertex witnesses survived** the tie-free filter, confirming that the smallest separation example is robust
+3. **The tie-free condition is strict**: it requires checking both original and perturbed samples
