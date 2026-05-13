@@ -14,15 +14,29 @@
       "fixed_sample_replace_one_max": "max over replace indices of |loss_original - loss_replaced|",
       "k": 1
     },
-    "min_gap_filter": 1,
-    "num_witnesses_found": 2068,
     "constraints": [
-      "sample is ordered tuple with each vertex exactly once",
-      "no duplicate sample occurrences in search",
+      "sample is an ordered tuple with each graph vertex exactly once",
+      "no duplicate sample occurrences in this TASK-007 search",
       "k=1 for all computations",
       "computational witnesses are not proofs",
-      "tie-breaking: distance then index, label ties favor 0"
-    ]
+      "tie-breaking: distance then sample index, label ties favor 0"
+    ],
+    "search_stats": {
+      "total_graphs": 44,
+      "total_samples_evaluated": 14794,
+      "skipped_undefined_samples": 2
+    },
+    "counts_by_vertices": {
+      "1": 0,
+      "2": 4,
+      "3": 48,
+      "4": 2016
+    },
+    "minimal_vertex_count": 2,
+    "no_solution_vertex_counts": [
+      1
+    ],
+    "num_witnesses_found": 2068
   },
   "witnesses": [
     {

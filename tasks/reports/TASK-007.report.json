@@ -1,0 +1,70 @@
+
+
+## TASK-007 Report: Search minimal 1-NN witnesses
+
+### Overview
+Implemented the minimal 1-NN witness search for LOO vs replace-one separation as specified in TASK-007.
+
+### Search Space
+- **Graph type**: Connected simple undirected labeled graphs
+- **Vertex range**: 1 to `max_vertices` (validated with `--max_vertices 4`)
+- **Sample constraint**: Each graph vertex appears exactly once (no duplicates)
+- **Labelings**: All binary labelings of the ordered sample
+- **Orderings**: All permutations of the vertex set as sample order
+
+### Required Work Completed
+
+1. **Enumeration**: Implemented `enumerate_connected_graphs()` using NetworkX for connectivity checking, generating all subsets of edges and filtering for connected graphs.
+
+2. **Search**: Computed fixed-sample brute-force maxima for:
+   - **LOO**: `max over delete indices of |loss_original - loss_deleted|`
+   - **Replace-one**: `max over replace indices of |loss_original - loss_replaced|`
+   Both at `k=1` using the accepted semantics from `stability.py`.
+
+3. **Constraints recorded**: 
+   - Sample is ordered tuple with each vertex exactly once
+   - No duplicate sample occurrences in search
+   - k=1 for all computations
+   - Tie-breaking: distance then index, label ties favor 0
+
+4. **Witness JSON saved**: `outputs/witnesses/1nn_separation_witnesses.json`
+
+5. **Reproducibility command**: 
+   ```bash
+   PYTHONPATH=src python experiments/search_minimal_1nn.py --max_vertices 4
+   ```
+
+### Search Results (max_vertices=4)
+
+| Metric | Value |
+|--------|-------|
+| Total graphs searched | 44 |
+| Total samples evaluated | 14,794 |
+| Witnesses found | 2,068 |
+| Unique minimal configs | 364 |
+| Max separation gap | 1 |
+
+**Distribution by vertices**: v=2: 4, v=3: 48, v=4: 2016
+
+**Key finding**: All witnesses show `loo_max=0` and `replace_max=1`, resulting in gap=1. No witness with larger separation gap was found in the searched space.
+
+### Minimal Witness Example
+```
+v=2, single edge (0-1):
+  sample_order: [0, 1], labels: [0, 0]
+  loo_max: 0, replace_max: 1, gap: 1
+```
+
+### Files Changed
+- `experiments/search_minimal_1nn.py` - Full implementation (327 lines)
+- `experiments/analyze_witnesses.py` - Analysis tool (134 lines, new)
+- `outputs/witnesses/1nn_separation_witnesses.json` - Witness data (87KB, new)
+
+### Validation
+- All 151 existing tests pass
+- Validation command: `PYTHONPATH=src python experiments/search_minimal_1nn.py --max_vertices 4`
+
+### Constraints Noted
+- Computational witnesses are not proofs
+- Do not claim minimality as theorem
+- Do not change stability definitions

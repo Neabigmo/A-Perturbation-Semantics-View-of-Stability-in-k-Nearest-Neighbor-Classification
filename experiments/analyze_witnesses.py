@@ -7,9 +7,12 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, "src")
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 
 def main() -> int:
@@ -20,7 +23,7 @@ def main() -> int:
         "witness_file",
         type=str,
         nargs="?",
-        default="outputs/witnesses/1nn_separation_witnesses.json",
+        default=str(ROOT / "outputs" / "witnesses" / "1nn_separation_witnesses.json"),
         help="Path to witness JSON file"
     )
     parser.add_argument(

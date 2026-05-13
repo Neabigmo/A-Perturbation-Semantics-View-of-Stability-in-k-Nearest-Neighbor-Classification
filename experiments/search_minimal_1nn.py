@@ -2,295 +2,168 @@
 
 This module enumerates small graph metric examples and produces witness JSON
 for 1-NN separation candidates, as specified in TASK-007.
-
-Search space for --max_vertices M:
-- all connected simple undirected labeled graphs on vertex sets {0, ..., v-1}
-  for each 1 <= v <= M
-- all binary labelings of the ordered sample
-- all orderings of the vertex set as the sample order
-
-Separation target:
-- fixed-sample brute-force LOO maximum versus
-- fixed-sample brute-force replace-one maximum,
-both at k=1, using the accepted semantics from stability.py.
 """
 
 from __future__ import annotations
 
 import argparse
-import itertools
-import json
-import os
 import sys
-from dataclasses import dataclass, asdict
-from typing import Iterator
+from pathlib import Path
 
-import networkx as nx
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from knn_stability.graph_metrics import adjacency_to_graph_metric
-from knn_stability.knn import LabeledSample
-from knn_stability.stability import (
+from knn_stability.enumeration import (  # noqa: E402
+    enumerate_binary_labelings,
+    enumerate_connected_graphs,
+    enumerate_vertex_orders,
+)
+from knn_stability.graph_metrics import adjacency_to_graph_metric  # noqa: E402
+from knn_stability.knn import LabeledSample  # noqa: E402
+from knn_stability.stability import (  # noqa: E402
     uniform_loo_stability,
     uniform_replace_one_stability,
 )
-
-
-@dataclass
-class WitnessRecord:
-    """Record for a potential LOO vs replace-one separation witness."""
-    num_vertices: int
-    num_edges: int
-    adjacency_list: dict[int, list[int]]
-    sample_order: list[int]  # vertex order in sample
-    labels: list[int]  # label for each vertex in sample order
-    loo_max: int  # max over delete indices
-    loo_witness_index: int  # delete_index achieving loo_max
-    replace_max: int  # max over all replace indices
-    replace_witness_index: int  # replace_index achieving replace_max
-    replace_witness_replacement_point: int
-    replace_witness_replacement_label: int
-    replace_witness_query_point: int
-    replace_witness_query_label: int
-    separation_gap: int  # abs(loo_max - replace_max)
-
-
-def enumerate_connected_graphs(num_vertices: int) -> Iterator[dict[int, set[int]]]:
-    """Generate all connected simple undirected graphs on vertices 0..n-1.
-
-    Parameters
-    ----------
-    num_vertices : int
-        Number of vertices.
-
-    Yields
-    ------
-    dict[int, set[int]]
-        Adjacency list representation of each connected graph.
-    """
-    vertices = list(range(num_vertices))
-    edges = list(itertools.combinations(vertices, 2))
-
-    # Generate all possible edge subsets
-    for edge_mask in range(1 << len(edges)):
-        adjacency: dict[int, set[int]] = {v: set() for v in vertices}
-
-        for i, (u, v) in enumerate(edges):
-            if edge_mask & (1 << i):
-                adjacency[u].add(v)
-                adjacency[v].add(u)
-
-        # Check connectivity using NetworkX
-        G = nx.Graph()
-        G.add_nodes_from(vertices)
-        for u, v in edges:
-            if u in adjacency[v]:  # edge exists
-                G.add_edge(u, v)
-
-        if nx.is_connected(G):
-            yield adjacency
+from knn_stability.witnesses import (  # noqa: E402
+    WitnessRecord,
+    save_witness_search,
+)
 
 
 def compute_stability_metrics(
-    metric,  # FiniteMetricSpace
-    sample_order: tuple[int, ...],
-    labels: tuple[int, ...],
+    sample: LabeledSample,
     k: int = 1,
-) -> tuple[int, int, int, int, int, int]:
-    """Compute LOO and replace-one stability maxima for a sample.
+) -> tuple[int, int, int, int, int, int, int, int]:
+    """Compute fixed-sample LOO and replace-one maxima for one sample."""
+    loo_max, loo_witness_index = uniform_loo_stability(sample, k)
 
-    Returns
-    -------
-    tuple[int, int, int, int, int, int]
-        (loo_max, loo_witness_index,
-         replace_max, replace_witness_index,
-         replace_replacement_point, replace_replacement_label,
-         replace_query_point, replace_query_label)
-    """
-    sample = LabeledSample(
-        metric=metric,
-        point_indices=sample_order,
-        labels=labels,
-    )
-
-    # LOO stability: max over delete indices
-    loo_max, loo_witness = uniform_loo_stability(sample, k)
-
-    # Replace-one stability: max over replace indices
     replace_max = 0
-    best_replace = (0, 0, 0, (0, 0))  # (point, label, index, query)
-    for replace_idx in range(sample.n):
-        rep_max, rep_point, rep_label, rep_query = uniform_replace_one_stability(
-            sample, replace_idx, k
-        )
-        if rep_max > replace_max:
-            replace_max = rep_max
-            best_replace = (rep_point, rep_label, replace_idx, rep_query)
+    replace_witness_index = 0
+    replace_witness_point = 0
+    replace_witness_label = 0
+    replace_query_point = 0
+    replace_query_label = 0
 
-    rep_point, rep_label, replace_witness, (rep_query_point, rep_query_label) = best_replace
+    for replace_index in range(sample.n):
+        (
+            candidate_max,
+            candidate_point,
+            candidate_label,
+            candidate_query,
+        ) = uniform_replace_one_stability(sample, replace_index, k)
+        if candidate_max > replace_max:
+            replace_max = candidate_max
+            replace_witness_index = replace_index
+            replace_witness_point = candidate_point
+            replace_witness_label = candidate_label
+            replace_query_point, replace_query_label = candidate_query
 
     return (
-        loo_max, loo_witness,
-        replace_max, replace_witness,
-        rep_point, rep_label, rep_query_point, rep_query_label
+        loo_max,
+        loo_witness_index,
+        replace_max,
+        replace_witness_index,
+        replace_witness_point,
+        replace_witness_label,
+        replace_query_point,
+        replace_query_label,
     )
 
 
-def search_witnesses(max_vertices: int, output_dir: str) -> list[WitnessRecord]:
-    """Search for LOO vs replace-one separation witnesses.
-
-    Parameters
-    ----------
-    max_vertices : int
-        Maximum number of vertices to search (inclusive).
-    output_dir : str
-        Directory to save witness JSON files.
-
-    Returns
-    -------
-    list[WitnessRecord]
-        List of witness records where LOO max != replace-one max.
-    """
+def search_witnesses(max_vertices: int) -> tuple[list[WitnessRecord], dict[str, int]]:
+    """Search the TASK-007 graph space for separation candidates."""
     witnesses: list[WitnessRecord] = []
-    search_stats = {
+    stats = {
         "total_graphs": 0,
-        "total_samples_per_graph": 0,
-        "graphs_with_separation": 0,
+        "total_samples_evaluated": 0,
+        "skipped_undefined_samples": 0,
     }
 
     for num_vertices in range(1, max_vertices + 1):
-        print(f"Searching graphs with {num_vertices} vertices...", file=sys.stderr)
-
-        # Generate all connected graphs
         for adjacency in enumerate_connected_graphs(num_vertices):
-            search_stats["total_graphs"] += 1
+            stats["total_graphs"] += 1
+            metric = adjacency_to_graph_metric(adjacency)
+            adjacency_list = {
+                vertex: sorted(neighbors) for vertex, neighbors in adjacency.items()
+            }
 
-            try:
-                metric = adjacency_to_graph_metric(adjacency)
-            except ValueError:
-                # Skip disconnected or invalid graphs
-                continue
-
-            # Convert adjacency to list format for JSON
-            adj_list = {k: sorted(list(v)) for k, v in adjacency.items()}
-
-            vertices = list(range(num_vertices))
-
-            # All orderings of vertices as sample
-            for sample_order in itertools.permutations(vertices):
-                # All binary labelings
-                for label_mask in range(1 << num_vertices):
-                    labels = tuple((label_mask >> i) & 1 for i in range(num_vertices))
-
-                    search_stats["total_samples_per_graph"] += 1
-
-                    # Compute stability metrics
+            for sample_order in enumerate_vertex_orders(num_vertices):
+                for labels in enumerate_binary_labelings(num_vertices):
+                    stats["total_samples_evaluated"] += 1
+                    sample = LabeledSample(
+                        metric=metric,
+                        point_indices=sample_order,
+                        labels=labels,
+                    )
                     try:
                         (
-                            loo_max, loo_witness,
-                            rep_max, rep_witness,
-                            rep_point, rep_label, rep_query_point, rep_query_label
-                        ) = compute_stability_metrics(
-                            metric,
-                            sample_order,
-                            labels,
-                            k=1,
-                        )
-                    except (ValueError, IndexError):
-                        # Skip invalid configurations
+                            loo_max,
+                            loo_witness_index,
+                            replace_max,
+                            replace_witness_index,
+                            replace_witness_point,
+                            replace_witness_label,
+                            replace_query_point,
+                            replace_query_label,
+                        ) = compute_stability_metrics(sample, k=1)
+                    except ValueError:
+                        stats["skipped_undefined_samples"] += 1
                         continue
 
-                    # Check for separation
-                    if loo_max != rep_max:
-                        search_stats["graphs_with_separation"] += 1
+                    if loo_max == replace_max:
+                        continue
 
-                        record = WitnessRecord(
+                    witnesses.append(
+                        WitnessRecord(
                             num_vertices=num_vertices,
-                            num_edges=sum(len(v) for v in adjacency.values()) // 2,
-                            adjacency_list=adj_list,
+                            num_edges=sum(len(neighbors) for neighbors in adjacency.values())
+                            // 2,
+                            adjacency_list=adjacency_list,
                             sample_order=list(sample_order),
                             labels=list(labels),
                             loo_max=loo_max,
-                            loo_witness_index=loo_witness,
-                            replace_max=rep_max,
-                            replace_witness_index=rep_witness,
-                            replace_witness_replacement_point=rep_point,
-                            replace_witness_replacement_label=rep_label,
-                            replace_witness_query_point=rep_query_point,
-                            replace_witness_query_label=rep_query_label,
-                            separation_gap=abs(loo_max - rep_max),
+                            loo_witness_index=loo_witness_index,
+                            replace_max=replace_max,
+                            replace_witness_index=replace_witness_index,
+                            replace_witness_replacement_point=replace_witness_point,
+                            replace_witness_replacement_label=replace_witness_label,
+                            replace_witness_query_point=replace_query_point,
+                            replace_witness_query_label=replace_query_label,
+                            separation_gap=abs(loo_max - replace_max),
                         )
-                        witnesses.append(record)
+                    )
 
-    # Print search statistics
-    print(
-        f"\nSearch Statistics:\n"
-        f"  Total graphs searched: {search_stats['total_graphs']}\n"
-        f"  Total samples evaluated: {search_stats['total_samples_per_graph']}\n"
-        f"  Graphs with separation found: {search_stats['graphs_with_separation']}\n",
-        file=sys.stderr
-    )
-
-    return witnesses
+    return witnesses, stats
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Search for minimal 1-NN LOO vs replace-one separation witnesses."
-    )
-    parser.add_argument(
-        "--max_vertices",
-        type=int,
-        required=True,
-        help="Maximum number of vertices to search (inclusive)."
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        default="outputs/witnesses",
-        help="Directory to save witness JSON files."
-    )
-    parser.add_argument(
-        "--min_gap",
-        type=int,
-        default=1,
-        help="Minimum separation gap to report."
-    )
-    args = parser.parse_args()
+def build_metadata(
+    max_vertices: int,
+    witnesses: list[WitnessRecord],
+    stats: dict[str, int],
+) -> dict[str, object]:
+    """Build JSON metadata for the TASK-007 search output."""
+    counts_by_vertices: dict[str, int] = {}
+    for vertex_count in range(1, max_vertices + 1):
+        counts_by_vertices[str(vertex_count)] = sum(
+            1 for witness in witnesses if witness.num_vertices == vertex_count
+        )
 
-    if args.max_vertices < 1:
-        parser.error("--max_vertices must be at least 1")
+    witness_vertices = [witness.num_vertices for witness in witnesses]
+    minimal_vertex_count = min(witness_vertices) if witness_vertices else None
+    no_solution_vertex_counts = [
+        vertex_count
+        for vertex_count in range(1, max_vertices + 1)
+        if counts_by_vertices[str(vertex_count)] == 0
+    ]
 
-    # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
-
-    print(
-        f"Searching for LOO vs replace-one separation witnesses...\n"
-        f"Max vertices: {args.max_vertices}\n"
-        f"Output directory: {args.output_dir}\n",
-        file=sys.stderr
-    )
-
-    # Run search
-    witnesses = search_witnesses(args.max_vertices, args.output_dir)
-
-    # Filter by minimum gap
-    witnesses = [w for w in witnesses if w.separation_gap >= args.min_gap]
-
-    # Save all witnesses to single JSON
-    output_file = os.path.join(args.output_dir, "1nn_separation_witnesses.json")
-
-    # Convert dataclass instances to dicts for JSON serialization
-    witness_data = [asdict(w) for w in witnesses]
-
-    metadata = {
+    return {
         "task": "TASK-007",
         "description": "Search for minimal 1-NN LOO vs replace-one separation witnesses",
         "search_space": {
             "graph_type": "connected simple undirected labeled graphs",
-            "vertex_range": f"1 to {args.max_vertices}",
+            "vertex_range": f"1 to {max_vertices}",
             "sample_constraint": "each graph vertex appears exactly once (no duplicates)",
             "labelings": "all binary labelings",
             "orderings": "all permutations of vertex set",
@@ -300,35 +173,57 @@ def main() -> int:
             "fixed_sample_replace_one_max": "max over replace indices of |loss_original - loss_replaced|",
             "k": 1,
         },
-        "min_gap_filter": args.min_gap,
-        "num_witnesses_found": len(witnesses),
         "constraints": [
-            "sample is ordered tuple with each vertex exactly once",
-            "no duplicate sample occurrences in search",
+            "sample is an ordered tuple with each graph vertex exactly once",
+            "no duplicate sample occurrences in this TASK-007 search",
             "k=1 for all computations",
             "computational witnesses are not proofs",
-            "tie-breaking: distance then index, label ties favor 0",
+            "tie-breaking: distance then sample index, label ties favor 0",
         ],
+        "search_stats": stats,
+        "counts_by_vertices": counts_by_vertices,
+        "minimal_vertex_count": minimal_vertex_count,
+        "no_solution_vertex_counts": no_solution_vertex_counts,
+        "num_witnesses_found": len(witnesses),
     }
 
-    output_data = {
-        "metadata": metadata,
-        "witnesses": witness_data,
-    }
 
-    with open(output_file, "w") as f:
-        json.dump(output_data, f, indent=2)
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Search for minimal 1-NN LOO vs replace-one separation witnesses."
+    )
+    parser.add_argument(
+        "--max_vertices",
+        type=int,
+        required=True,
+        help="Maximum number of vertices to search (inclusive).",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=ROOT / "outputs" / "witnesses" / "1nn_separation_witnesses.json",
+        help="Output JSON path.",
+    )
+    return parser.parse_args()
 
-    print(f"\nResults saved to: {output_file}")
-    print(f"Witnesses found: {len(witnesses)}")
 
-    if witnesses:
-        print("\nFirst witness (sorted by vertices, edges, order):")
-        print(json.dumps(output_data["witnesses"][0], indent=2))
+def main() -> int:
+    """Run the TASK-007 witness search."""
+    args = parse_args()
+    if args.max_vertices < 1:
+        raise SystemExit("--max_vertices must be at least 1.")
 
+    witnesses, stats = search_witnesses(args.max_vertices)
+    metadata = build_metadata(args.max_vertices, witnesses, stats)
+    save_witness_search(args.output, metadata, witnesses)
+
+    print(f"Wrote {len(witnesses)} witnesses to {args.output}")
+    if metadata["minimal_vertex_count"] is not None:
+        print(f"Minimal witness vertex count: {metadata['minimal_vertex_count']}")
+    print(f"No-solution vertex counts: {metadata['no_solution_vertex_counts']}")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
-
+    raise SystemExit(main())

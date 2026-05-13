@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-007",
+  "model": "opus",
+  "exit_code": 0,
+  "elapsed_seconds": 742.634,
+  "report_path": "tasks\\reports\\TASK-007.report.json",
+  "status": "accepted_with_codex_review",
+  "reviewer": "Codex",
+  "final_validation": {
+    "experiment": "conda run -p E:\\anaconda3\\envs\\pytorch-clean python experiments/search_minimal_1nn.py --max_vertices 4",
+    "tests": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe -m pytest"
+  },
+  "notes": [
+    "Codex fixed the experiment import path so the task-card validation command works without an extra PYTHONPATH override.",
+    "Codex refactored graph enumeration and witness serialization into src/knn_stability for reuse in later witness tasks.",
+    "Codex handled v=1 configurations as skipped undefined LOO cases rather than crashing the search.",
+    "Final accepted state writes outputs/witnesses/1nn_separation_witnesses.json and passes 154 tests."
+  ]
+}
