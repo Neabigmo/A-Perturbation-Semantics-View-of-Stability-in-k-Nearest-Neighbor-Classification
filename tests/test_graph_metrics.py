@@ -161,6 +161,12 @@ class TestAdjacencyToGraphMetric:
         with pytest.raises(ValueError, match="disconnected"):
             adjacency_to_graph_metric(adj)
 
+    def test_directed_adjacency_rejected(self) -> None:
+        """Asymmetric adjacency is not accepted as an undirected graph."""
+        adj = {0: {1}, 1: set()}
+        with pytest.raises(ValueError, match="undirected"):
+            adjacency_to_graph_metric(adj)
+
     def test_disconnected_single_island(self) -> None:
         """One isolated vertex raises error."""
         adj = {0: {1}, 1: {0}, 2: set()}
@@ -184,4 +190,3 @@ class TestAdjacencyToGraphMetric:
         adj = edge_list_to_adjacency([(0, 1), (1, 2), (2, 3)])
         metric = adjacency_to_graph_metric(adj)
         assert is_valid_metric(metric.distances)
-

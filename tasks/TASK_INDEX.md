@@ -8,10 +8,10 @@
 
 - [TASK-001](done/TASK-001.md): Initialize repository skeleton
 - [TASK-002](done/TASK-002.md): Implement finite metric spaces
+- [TASK-003](done/TASK-003.md): Implement graph shortest-path metrics
 
 ## Backlog
 
-- [TASK-003](backlog/TASK-003.md): Implement graph shortest-path metrics
 - [TASK-004](backlog/TASK-004.md): Implement deterministic tie-breaking
 - [TASK-005](backlog/TASK-005.md): Implement deterministic k-NN classifier
 - [TASK-006](backlog/TASK-006.md): Implement stability indicators

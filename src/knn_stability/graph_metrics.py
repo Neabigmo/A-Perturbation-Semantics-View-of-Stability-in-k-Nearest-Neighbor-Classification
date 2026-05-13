@@ -8,6 +8,7 @@ Disconnected graphs are rejected in code paths that require a metric.
 
 from __future__ import annotations
 
+from collections import deque
 from typing import Hashable
 
 import numpy as np
@@ -52,6 +53,8 @@ def adjacency_to_graph_metric(
     if not adjacency:
         return FiniteMetricSpace(points=[], distances=np.array([]))
 
+    _validate_undirected_adjacency(adjacency)
+
     vertices = list(adjacency.keys())
     n = len(vertices)
     vertex_to_idx = {v: i for i, v in enumerate(vertices)}
@@ -76,11 +79,7 @@ def adjacency_to_graph_metric(
                 )
             j = vertex_to_idx[neighbor]
             dist[i, j] = 1.0
-            dist[j, i] = 1.0  # undirected
-
-    # Check for symmetry (verifies undirected)
-    if not np.allclose(dist, dist.T):
-        raise ValueError("Adjacency list must represent an undirected graph")
+            dist[j, i] = 1.0
 
     # Floyd-Warshall algorithm to compute shortest paths
     for k in range(n):
@@ -90,8 +89,7 @@ def adjacency_to_graph_metric(
                     dist[i, j] = dist[i, k] + dist[k, j]
 
     # Check for disconnected graph (any INF remaining off diagonal)
-    if np.any((dist < INF) == False) and not np.allclose(dist, 0):
-        # Find any disconnected vertex pairs
+    if not np.isfinite(dist).all():
         disconnected = []
         for i in range(n):
             for j in range(i + 1, n):
@@ -104,6 +102,20 @@ def adjacency_to_graph_metric(
             )
 
     return FiniteMetricSpace(points=vertices, distances=dist)
+
+
+def _validate_undirected_adjacency(adjacency: dict[Hashable, set[Hashable]]) -> None:
+    """Check that every listed edge appears in both adjacency directions."""
+    for vertex, neighbors in adjacency.items():
+        for neighbor in neighbors:
+            if neighbor not in adjacency:
+                raise ValueError(
+                    f"Vertex {neighbor} appears in adjacency of {vertex} but is not a key"
+                )
+            if vertex == neighbor:
+                continue
+            if vertex not in adjacency[neighbor]:
+                raise ValueError("Adjacency list must represent an undirected graph")
 
 
 def edge_list_to_adjacency(
@@ -173,15 +185,14 @@ def is_connected(adjacency: dict[Hashable, set[Hashable]]) -> bool:
         return True
 
     visited: set[Hashable] = set()
-    queue = [vertices[0]]
+    queue = deque([vertices[0]])
     visited.add(vertices[0])
 
     while queue:
-        v = queue.pop(0)
+        v = queue.popleft()
         for neighbor in adjacency.get(v, set()):
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
 
     return len(visited) == len(vertices)
-
