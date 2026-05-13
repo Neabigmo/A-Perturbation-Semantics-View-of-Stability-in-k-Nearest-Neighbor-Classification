@@ -1,0 +1,57 @@
+
+
+## TASK-003 Report: Graph Shortest-Path Metrics
+
+### Status: ✓ COMPLETE
+
+**Files changed:** 2  
+**Tests:** 24 passed (all new), 52 total passed
+
+---
+
+### Implementation Summary
+
+| File | Change |
+|------|--------|
+| `src/knn_stability/graph_metrics.py` | +181 lines - implementation |
+| `tests/test_graph_metrics.py` | +185 lines - tests |
+
+**Functions implemented:**
+
+1. **`adjacency_to_graph_metric(adjacency)`** - Converts an undirected unweighted connected graph to a shortest-path metric using Floyd-Warshall algorithm
+2. **`edge_list_to_adjacency(edges, vertices=None)`** - Helper to convert edge lists to adjacency representation
+3. **`is_connected(adjacency)`** - BFS-based connectivity checker
+
+**Key behaviors per spec:**
+- Rejects disconnected graphs with informative `ValueError`
+- Returns `FiniteMetricSpace` compatible with TASK-002 interface
+- Self-loops are ignored (simple graph)
+- Hashable vertex types supported (stored in `points`, accessed via integer indices)
+
+**Test coverage:**
+- Paths, cycles, complete graphs, star graphs, mixed-distance graphs
+- Disconnected graphs (verified rejection)
+- Hashable vertices (strings)
+
+---
+
+### Validation
+
+```powershell
+conda run -p E:\anaconda3\envs\pytorch-clean python -m pytest
+# Result: 52 passed in 0.12s
+```
+
+---
+
+### Git Commit
+
+```
+1981896 TASK-003: Implement graph shortest-path metrics
+```
+
+---
+
+### Do-Not Checklist
+- ✓ Did not change finite metric validation semantics
+- ✓ Did not implement enumeration
