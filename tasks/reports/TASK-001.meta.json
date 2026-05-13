@@ -1,0 +1,7 @@
+{
+  "task_id": "TASK-001",
+  "model": "opus",
+  "exit_code": 0,
+  "elapsed_seconds": 297.65,
+  "report_path": "tasks\\reports\\TASK-001.report.json"
+}

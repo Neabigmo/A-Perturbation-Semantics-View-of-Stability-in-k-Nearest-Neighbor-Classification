@@ -2,7 +2,11 @@
 
 ## Active
 
-- [TASK-001](active/TASK-001.md): Initialize repository skeleton
+- None.
+
+## Done
+
+- [TASK-001](done/TASK-001.md): Initialize repository skeleton
 
 ## Backlog
 
@@ -27,4 +31,3 @@
 - C-TASK-004: Derive exact k-NN perturbation criterion.
 - C-TASK-005: Convert computational witnesses into mathematical lemmas.
 - C-TASK-006: Publication strategy and contribution sheet.
-

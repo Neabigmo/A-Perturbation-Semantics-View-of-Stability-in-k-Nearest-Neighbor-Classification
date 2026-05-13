@@ -15,7 +15,9 @@ REQUIRED_PATHS = [
     ".env.template",
     "docs/project-control/02_DEFINITIONS_SPEC.md",
     "tasks/TASK_INDEX.md",
-    "tasks/active/TASK-001.md",
+    "tasks/active",
+    "tasks/backlog/TASK-002.md",
+    "tasks/done",
     "tools/run_claude_task.py",
     "src/knn_stability/__init__.py",
     "tests/test_metrics.py",
@@ -35,4 +37,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

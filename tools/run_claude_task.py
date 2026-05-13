@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -16,6 +17,8 @@ from pathlib import Path
 
 
 DEFAULT_REPORT_DIR = Path("tasks/reports")
+DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "opus")
+DEFAULT_CLAUDE_BIN = os.environ.get("CLAUDE_BIN") or shutil.which("claude") or shutil.which("claude.cmd") or "claude"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -33,6 +36,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for task reports.",
     )
     parser.add_argument(
+        "--model",
+        default=DEFAULT_MODEL,
+        help="Claude model alias or name for this task run.",
+    )
+    parser.add_argument(
+        "--effort",
+        default=None,
+        help="Optional Claude effort level for this task run.",
+    )
+    parser.add_argument(
+        "--claude-bin",
+        default=DEFAULT_CLAUDE_BIN,
+        help="Path or command name for the Claude Code executable.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Validate inputs and print the sanitized command without running Claude.",
@@ -48,10 +66,32 @@ def env_with_defaults() -> dict[str, str]:
     env.setdefault("http_proxy", env["HTTP_PROXY"])
     env.setdefault("https_proxy", env["HTTPS_PROXY"])
     env.setdefault("all_proxy", env["ALL_PROXY"])
+    if env.get("ANTHROPIC_AUTH_TOKEN") and not env.get("ANTHROPIC_API_KEY"):
+        # Claude --bare requires ANTHROPIC_API_KEY, so mirror a provided token.
+        env["ANTHROPIC_API_KEY"] = env["ANTHROPIC_AUTH_TOKEN"]
+    env.setdefault("ANTHROPIC_MODEL", DEFAULT_MODEL)
+    env.setdefault("ANTHROPIC_DEFAULT_OPUS_MODEL", "claude-opus-4-7")
     return env
 
 
-def run_task(task_path: Path, allowed_tools: str, report_dir: Path, dry_run: bool) -> int:
+def redact_secrets(text: str, env: dict[str, str]) -> str:
+    redacted = text
+    for key in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"):
+        value = env.get(key)
+        if value:
+            redacted = redacted.replace(value, f"<redacted:{key}>")
+    return redacted
+
+
+def run_task(
+    task_path: Path,
+    allowed_tools: str,
+    report_dir: Path,
+    model: str,
+    effort: str | None,
+    claude_bin: str,
+    dry_run: bool,
+) -> int:
     if not task_path.exists():
         raise SystemExit(f"Task file not found: {task_path}")
 
@@ -62,18 +102,30 @@ def run_task(task_path: Path, allowed_tools: str, report_dir: Path, dry_run: boo
 
     prompt = task_path.read_text(encoding="utf-8")
     cmd = [
-        "claude",
+        claude_bin,
         "--bare",
         "-p",
         prompt,
+        "--model",
+        model,
         "--allowedTools",
         allowed_tools,
         "--output-format",
         "json",
     ]
+    if effort:
+        cmd.extend(["--effort", effort])
 
     if dry_run:
-        print("claude --bare -p <task prompt> --allowedTools " + allowed_tools + " --output-format json")
+        parts = [
+            f"{claude_bin} --bare -p <task prompt>",
+            f"--model {model}",
+            f"--allowedTools {allowed_tools}",
+            "--output-format json",
+        ]
+        if effort:
+            parts.append(f"--effort {effort}")
+        print(" ".join(parts))
         return 0
 
     env = env_with_defaults()
@@ -81,21 +133,26 @@ def run_task(task_path: Path, allowed_tools: str, report_dir: Path, dry_run: boo
         failed = {
             "task_id": task_id,
             "status": "blocked",
-            "reason": "ANTHROPIC_API_KEY is not set in the process environment.",
+            "reason": (
+                "Neither ANTHROPIC_API_KEY nor ANTHROPIC_AUTH_TOKEN is set "
+                "in the process environment."
+            ),
             "report_path": str(report_path),
+            "model": model,
         }
         failed_path.write_text(json.dumps(failed, indent=2), encoding="utf-8")
-        print(f"Blocked: ANTHROPIC_API_KEY is not set. Wrote {failed_path}", file=sys.stderr)
+        print(f"Blocked: auth token is not set. Wrote {failed_path}", file=sys.stderr)
         return 2
 
     started = time.time()
     result = subprocess.run(cmd, env=env, text=True, capture_output=True, check=False)
     elapsed_seconds = round(time.time() - started, 3)
 
-    report_path.write_text(result.stdout, encoding="utf-8")
+    report_path.write_text(redact_secrets(result.stdout, env), encoding="utf-8")
 
     metadata = {
         "task_id": task_id,
+        "model": model,
         "exit_code": result.returncode,
         "elapsed_seconds": elapsed_seconds,
         "report_path": str(report_path),
@@ -104,7 +161,7 @@ def run_task(task_path: Path, allowed_tools: str, report_dir: Path, dry_run: boo
         failed = {
             **metadata,
             "status": "failed",
-            "stderr": result.stderr,
+            "stderr": redact_secrets(result.stderr, env),
         }
         failed_path.write_text(json.dumps(failed, indent=2), encoding="utf-8")
         print(f"Claude task failed. Wrote {failed_path}", file=sys.stderr)
@@ -118,7 +175,15 @@ def run_task(task_path: Path, allowed_tools: str, report_dir: Path, dry_run: boo
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    return run_task(args.task_path, args.allowed_tools, args.report_dir, args.dry_run)
+    return run_task(
+        args.task_path,
+        args.allowed_tools,
+        args.report_dir,
+        args.model,
+        args.effort,
+        args.claude_bin,
+        args.dry_run,
+    )
 
 
 if __name__ == "__main__":

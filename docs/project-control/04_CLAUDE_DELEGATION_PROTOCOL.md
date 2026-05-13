@@ -14,7 +14,9 @@
 $env:HTTP_PROXY = "http://127.0.0.1:7897"
 $env:HTTPS_PROXY = "http://127.0.0.1:7897"
 $env:ALL_PROXY = "socks5://127.0.0.1:7897"
-python tools/run_claude_task.py tasks/active/TASK-001.md
+$env:ANTHROPIC_MODEL = "opus"
+$env:ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-7"
+python tools/run_claude_task.py tasks/active/TASK-001.md --model opus
 ```
 
 ## Required Report Fields
@@ -31,4 +33,3 @@ python tools/run_claude_task.py tasks/active/TASK-001.md
 ## Codex Review
 
 Codex must inspect the report, run `git diff`, run tests, and check consistency with `02_DEFINITIONS_SPEC.md` before accepting.
-

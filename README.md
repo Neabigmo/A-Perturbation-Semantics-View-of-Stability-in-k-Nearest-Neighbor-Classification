@@ -40,3 +40,4 @@ $env:ALL_PROXY = "socks5://127.0.0.1:7897"
 3. Codex reviews the report, diff, tests, and definition consistency.
 4. Accepted changes are committed with the task id in the commit message.
 
+Current Claude task runs should target the Opus 4.7 line through the `opus` alias on the configured gateway.
