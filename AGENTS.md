@@ -12,6 +12,7 @@ This repository studies stability calculus for k-nearest-neighbor and related lo
 
 - Repository root: `H:\2026try\5.13`.
 - Preferred conda environment path: `E:\anaconda3\envs\pytorch-clean`.
+- Preferred LaTeX distribution path: `D:\texlive\2025`.
 - Use non-interactive commands such as:
 
 ```powershell
@@ -19,6 +20,8 @@ conda run -p E:\anaconda3\envs\pytorch-clean python -m pytest
 ```
 
 - Project Python compatibility is `>=3.9`.
+- For LaTeX compilation, prefer executables under `D:\texlive\2025\bin\windows`
+  when available.
 - Before network commands, set proxy variables explicitly:
 
 ```powershell
@@ -48,4 +51,3 @@ $env:ALL_PROXY = "socks5://127.0.0.1:7897"
 - Each Claude Code task receives only one short task card.
 - Do not send the full research blueprint or unpublished proof sketches to Claude Code unless the task truly requires it.
 - Claude Code reports must list changed files, commands run, test results, assumptions, ambiguities, and next steps.
-

@@ -1,2 +1,158 @@
-% Draft reserved for TASK-010 after definitions are frozen.
+\section{Definitions and Preliminaries}
+\label{sec:definitions}
 
+\subsection{Data Model and Sample}
+
+\begin{definition}[Sample]
+A \emph{sample} $S$ of size $n$ is an ordered tuple
+\[
+S = \big((x_1, y_1), \ldots, (x_n, y_n)\big)
+\]
+where each $x_i \in X$ lies in a finite metric space $(X, d)$ and each label $y_i \in \{0, 1\}$.
+\end{definition}
+
+The order of the tuple is semantically relevant only for deterministic tie-breaking. Two identical labeled points appearing at different indices are treated as distinct sample occurrences.
+
+\begin{itemize}
+    \item \textbf{Duplicate points are allowed.}
+    \item \textbf{Conflicting labels at the same point are allowed.}
+\end{itemize}
+
+Any theorem or experiment that excludes duplicates or conflicts must state this explicitly.
+
+\begin{definition}[Finite Metric Space]
+A finite metric space is a finite set $X$ together with a distance function
+\[
+d : X \times X \to \mathbb{R}_{\ge 0}
+\]
+satisfying for all $x, x', z \in X$:
+\begin{enumerate}
+    \item $d(x, x) = 0$;
+    \item $d(x, x') > 0$ for $x \ne x'$;
+    \item $d(x, x') = d(x', x)$;
+    \item $d(x, z) \le d(x, x') + d(x', z)$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Graph Shortest-Path Metric]
+For a finite, simple, connected, unweighted, undirected graph $G = (V, E)$, the graph metric is
+\[
+d_G(u, v) = \text{length of a shortest path from } u \text{ to } v.
+\]
+\end{definition}
+
+Disconnected graphs are rejected in code paths that require a metric.
+
+\subsection{Prediction Rule}
+
+The query point $x$ may be any element of $X$, including a point that appears in the training sample.
+
+\begin{note}[Deterministic Tie-Breaking]
+Neighbor ordering is determined lexicographically by:
+\begin{enumerate}
+    \item smaller distance to the query point;
+    \item smaller sample index in the ordered tuple.
+\end{enumerate}
+If class votes tie after the first $k$ ordered neighbors are selected, the predicted label is resolved by fixed label order $0 \prec 1$. Ties are always broken in favor of label $0$.
+\end{note}
+
+\begin{definition}[$k$-NN Prediction]
+Given $k \in \mathbb{N}$ with $1 \le k \le n$, the deterministic $k$-NN predictor $h_S^{(k)}(x)$ is obtained by:
+\begin{enumerate}
+    \item ordering the sample occurrences by the deterministic neighbor rule above;
+    \item selecting the first $k$ occurrences;
+    \item taking the majority vote of their labels;
+    \item resolving label-vote ties by $0 \prec 1$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Loss Function}
+
+\begin{definition}[Binary 0-1 Loss]
+For a hypothesis $h$ and a labeled point $(x, y) \in X \times \{0,1\}$, the binary classification loss is
+\[
+\ell(h, (x, y)) = \mathbf{1}\{h(x) \ne y\}.
+\]
+\end{definition}
+
+\subsection{Sample Perturbations}
+
+Let $S = \big((x_1, y_1), \ldots, (x_n, y_n)\big)$.
+
+\begin{definition}[Delete-One]
+For index $i \in \{1, \ldots, n\}$, define
+\[
+S^{-i} = \big((x_1, y_1), \ldots, (x_{i-1}, y_{i-1}), (x_{i+1}, y_{i+1}), \ldots, (x_n, y_n)\big).
+\]
+\end{definition}
+
+\begin{definition}[Add-One]
+For any labeled point $z = (x, y) \in X \times \{0,1\}$, define
+\[
+S \oplus z
+\]
+as the ordered tuple obtained by appending $z$ at the end.
+\end{definition}
+
+\begin{definition}[Replace-One]
+For index $i$ and labeled point $z = (x', y') \in X \times \{0,1\}$, define
+\[
+S^{i \leftarrow z}
+\]
+as the ordered tuple obtained by replacing the $i$-th occurrence of $S$ with $z$.
+\end{definition}
+
+In v0.1 worst-case stability definitions, the replacement point ranges over all labeled points in $X \times \{0,1\}$, not over a data-generating distribution.
+
+\subsection{Stability Notions}
+
+Unless otherwise stated, all pointwise notions are evaluated with fixed $k$, fixed metric space, fixed tie-breaking rule, and fixed loss defined above.
+
+\begin{note}
+Pointwise stability statements concern a fixed training sample, a fixed perturbation, and a fixed evaluation pair $(x, y)$. Expected stability refers to the expectation under an explicitly specified data-generating distribution. Uniform stability is the supremum of the corresponding indicator over all valid ordered training tuples, all allowed perturbation choices, and all evaluation pairs.
+\end{note}
+
+\begin{definition}[Pointwise Delete-One Stability Indicator]
+For index $i$ and query-label pair $(x, y)$, define
+\[
+\Delta_{\mathrm{del}}(S, i, x, y)
+=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S^{-i}}^{(k')}, (x, y)) \right|,
+\]
+where $k' = \min(k, n-1)$ when deletion reduces sample size below $k$.
+\end{definition}
+
+\begin{definition}[Pointwise Replace-One Stability Indicator]
+For index $i$, replacement $z$, and query-label pair $(x, y)$, define
+\[
+\Delta_{\mathrm{rep}}(S, i, z, x, y)
+=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S^{i \leftarrow z}}^{(k)}, (x, y)) \right|.
+\]
+\end{definition}
+
+\begin{definition}[Pointwise Add-One Stability Indicator]
+For added labeled point $z$ and query-label pair $(x, y)$, define
+\[
+\Delta_{\mathrm{add}}(S, z, x, y)
+=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S \oplus z}^{(k)}, (x, y)) \right|.
+\]
+\end{definition}
+
+\begin{definition}[LOO / CVloo Stability]
+For each index $i$, define
+\[
+\Delta_{\mathrm{loo}}(S, i)
+=
+\left| \ell(h_{S^{-i}}^{(k')}, (x_i, y_i)) - \ell(h_S^{(k)}, (x_i, y_i)) \right|.
+\]
+\end{definition}
+
+LOO evaluates at the deleted sample occurrence itself. This definition is occurrence-based: if the same point appears twice, deleting one copy and evaluating at that occurrence is distinct from deleting the other.
+
+For LOO, the uniform stability supremum is over ordered tuples $S$ and indices $i$, with the evaluation pair fixed to the deleted occurrence.
+
+\subsection{Consistency Note}
+
+The consistency notion used in paper-level discussion is classical distributional consistency for $k$-NN classification. It is not a finite-sequence surrogate notion. Any finite-metric experiment provides evidence about worst-case stability behavior; it does not by itself constitute a consistency statement.

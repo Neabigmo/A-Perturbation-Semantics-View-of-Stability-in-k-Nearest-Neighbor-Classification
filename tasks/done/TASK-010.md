@@ -26,7 +26,7 @@ Use only `docs/project-control/02_DEFINITIONS_SPEC.md`.
 ## Validation
 
 ```powershell
-latexmk -pdf paper/main.tex
+D:\texlive\2025\bin\windows\latexmk.exe -pdf -output-directory=paper paper/main.tex
 ```
 
 If `latexmk` is unavailable, report that plainly.
@@ -34,4 +34,3 @@ If `latexmk` is unavailable, report that plainly.
 ## Report
 
 Return sections modified, theorem/lemma numbers added, unproved claims, and compile result.
-

@@ -1,4 +1,10 @@
 \documentclass{article}
+\usepackage{amsmath, amsthm, amssymb}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{note}{Note}
 
 \title{A Stability Calculus for Local Learning Rules}
 \author{}
@@ -7,18 +13,17 @@
 \begin{document}
 \maketitle
 
-\input{sections/01_intro}
-\input{sections/02_related_work}
-\input{sections/03_definitions}
-\input{sections/04_general_calculus}
-\input{sections/05_knn_characterization}
-\input{sections/06_finite_metric_separations}
-\input{sections/07_k_extension}
-\input{sections/08_consistency_and_prediction}
-\input{sections/09_discussion}
+\input{paper/sections/01_intro}
+\input{paper/sections/02_related_work}
+\input{paper/sections/03_definitions}
+\input{paper/sections/04_general_calculus}
+\input{paper/sections/05_knn_characterization}
+\input{paper/sections/06_finite_metric_separations}
+\input{paper/sections/07_k_extension}
+\input{paper/sections/08_consistency_and_prediction}
+\input{paper/sections/09_discussion}
 
 \bibliographystyle{plain}
-\bibliography{refs}
+\bibliography{paper/refs}
 
 \end{document}
-

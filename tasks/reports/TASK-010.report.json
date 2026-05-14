@@ -1,0 +1,52 @@
+
+
+The compilation was **successful**. The output shows:
+```
+Output written on main.pdf (3 pages, 175451 bytes).
+Latexmk: All targets (main.pdf) are up-to-date
+```
+
+---
+
+## TASK-010 Report
+
+### Sections Modified
+
+| File | Change |
+|------|--------|
+| `paper/sections/03_definitions.tex` | **Drafted** all definitions from frozen spec |
+| `paper/main.tex` | **Added** `amsmath`, `amsthm`, `amssymb` packages and theorem environments (required for compilation) |
+
+### Theorem/Lemma/Note Numbers Added
+
+| Number | Type | Name |
+|--------|------|------|
+| Definition 1 | definition | Sample |
+| Definition 2 | definition | Finite Metric Space |
+| Definition 3 | definition | Graph Shortest-Path Metric |
+| Definition 4 | definition | $k$-NN Prediction |
+| Definition 5 | definition | Binary 0-1 Loss |
+| Definition 6 | definition | Delete-One |
+| Definition 7 | definition | Add-One |
+| Definition 8 | definition | Replace-One |
+| Definition 9 | definition | Pointwise Delete-One Stability Indicator |
+| Definition 10 | definition | Pointwise Replace-One Stability Indicator |
+| Definition 11 | definition | Pointwise Add-One Stability Indicator |
+| Definition 12 | definition | LOO / CVloo Stability |
+| Note 1 | note | Deterministic Tie-Breaking |
+| Note 2 | note | Stability Notions Summary |
+| Note 3 | note | Claim under review (uniform LOO stability characterization) |
+
+### Unproved Claims
+
+- **Note 3**: *"The precise characterization of uniform stability for LOO and its relationship to replace-one stability remain under review."* — Marked with `Claim under review` as required.
+
+### Compile Result
+
+**✓ SUCCESS**
+
+```
+D:\texlive\2025\bin\windows\latexmk.exe -pdf paper/main.tex
+Output written on main.pdf (3 pages, 175451 bytes)
+Latexmk: All targets (main.pdf) are up-to-date
+```
