@@ -9,6 +9,8 @@ description = "Research code for stability calculus of local learning rules and 
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
+    "matplotlib",
+    "networkx",
     "numpy",
     "pytest",
 ]
@@ -19,4 +21,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-
