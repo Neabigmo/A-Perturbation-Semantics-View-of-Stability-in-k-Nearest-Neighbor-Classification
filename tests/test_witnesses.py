@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from experiments.certify_minimality import build_certificate
+from experiments.generate_witness_figures import layout_by_degree
 from experiments.search_minimal_1nn import build_metadata, search_witnesses
 from knn_stability.enumeration import (
     enumerate_binary_labelings,
@@ -264,3 +265,11 @@ def test_build_minimality_certificate() -> None:
     assert certificate["not_a_proof"] is True
     assert certificate["observed_minimal_vertex_counts"]["task_007"] == 2
     assert certificate["observed_minimal_vertex_counts"]["task_008"] == 2
+
+
+def test_witness_figure_layout_by_degree() -> None:
+    positions, center = layout_by_degree({"0": [1, 2], "1": [0], "2": [0]})
+
+    assert center == 0
+    assert positions[0] == (0, 0)
+    assert set(positions) == {0, 1, 2}

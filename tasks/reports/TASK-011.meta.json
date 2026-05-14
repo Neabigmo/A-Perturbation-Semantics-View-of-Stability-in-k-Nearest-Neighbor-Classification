@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-011",
+  "model": "opus",
+  "exit_code": 0,
+  "elapsed_seconds": 351.613,
+  "report_path": "tasks\\reports\\TASK-011.report.json",
+  "status": "accepted_with_codex_review",
+  "reviewer": "Codex",
+  "final_validation": {
+    "figures": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe experiments\\generate_witness_figures.py --output_dir outputs\\figures",
+    "tests": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe -m pytest"
+  },
+  "notes": [
+    "Codex verified that accepted witness JSON files were not modified.",
+    "Codex renamed the layout helper to avoid implying every accepted graph is a star.",
+    "Codex recorded matplotlib and networkx in pyproject.toml to match the existing environment.yml dependencies.",
+    "Final accepted state writes PDF/SVG figures under outputs/figures and passes 164 tests."
+  ]
+}
