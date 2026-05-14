@@ -1,0 +1,33 @@
+# Literature Table
+
+| Work | Year | Notion | Perturbation | Evaluation point | Distributional or worst-case? | Relation to this paper | Risk |
+|---|---:|---|---|---|---|---|---|
+| Fix and Hodges, *Discriminatory Analysis* | 1951 | nearest-neighbor classification foundations | not a stability paper | prediction point under classification rule | distributional / classical statistical | historical origin of NN line, useful context only | low |
+| Cover and Hart, *Nearest Neighbor Pattern Classification* | 1967 | 1-NN risk and asymptotic comparison | not a perturbation paper | prediction risk under i.i.d. sampling | distributional / asymptotic | important to separate our finite worst-case focus from classical consistency lore | low |
+| Cover, *Estimation by the Nearest Neighbor Rule* | 1968 | NN regression / estimation asymptotics | not a perturbation paper | prediction under sampling distribution | distributional / asymptotic | supports consistency-compatibility discussion | low |
+| Stone, *Consistent Nonparametric Regression* | 1977 | universal consistency conditions including local rules | not a perturbation paper | population risk | distributional / asymptotic | key citation for "finite instability does not contradict consistency" | low |
+| Rogers and Wagner, *A Finite Sample Distribution-Free Performance Bound for Local Discrimination Rules* | 1978 | deleted estimate / local discrimination rules | delete-one style deleted estimate | deleted observation / cross-validation style | mostly distribution-free finite-sample | nearest known classical bridge between local rules and delete-one evaluation | medium |
+| Devroye and Wagner, *Distribution-Free Inequalities for the Deleted and Holdout Error Estimates* | 1979 | deleted estimate / holdout error | delete-one / holdout | deleted point or held-out point | distribution-free finite-sample | central precedent for leave-one-out style evaluation, but not our worst-case perturbation calculus | medium |
+| Devroye and Wagner, *The Strong Uniform Consistency of Nearest Neighbor Density Estimates* | 1977 | nearest-neighbor local statistics | not a stability paper | population estimation | asymptotic | background only | low |
+| Kearns and Ron, *Algorithmic Stability and Sanity-Check Bounds for Leave-One-Out Cross-Validation* | 1999 | algorithmic stability linked to LOO-CV | leave-one-out and general stability notions | deleted observation / CV | statistical / generalization-oriented | strong precedent that LOO and stability interact, but not a k-NN finite-metric separation paper | medium |
+| Bousquet and Elisseeff, *Stability and Generalization* | 2002 | uniform stability, hypothesis stability, CV stability | replace-one style training-set perturbation | expected loss / fresh test point | distributional / generalization | canonical baseline for stability terminology; paper must explain how our notions align and differ | high |
+| Kutin and Niyogi, *Almost-Everywhere Algorithmic Stability and Generalization Error* | 2002 | weaker and localized stability notions | replace-one style sample perturbation | fresh test point / probability bounds | distributional / generalization | important for novelty gate because many "weak stability" distinctions already exist | medium |
+| Mukherjee, Niyogi, Poggio, and Rifkin, *Learning Theory: Stability Is Sufficient for Generalization and Necessary and Sufficient for Consistency of Empirical Risk Minimization* | 2006 | stability-consistency relations for ERM | replace-one style | generalization / consistency | distributional / asymptotic | direct precedent for consistency discussion; our paper should not sound like a contradiction | high |
+| Feldman and Vondrak, *High Probability Generalization Bounds for Uniformly Stable Algorithms with Nearly Optimal Rate* | 2019 | refined uniform stability bounds | replace-one style | fresh test point | distributional / generalization | modern stability baseline; shows our contribution is not a sharper generalization bound | medium |
+| Bousquet, Klochkov, and Zhivotovskiy, *Sharpening and Generalizing Uniform Stability Bounds* | 2020 | refined stability generalization theory | replace-one style | fresh test point | distributional / generalization | another modern baseline; supports "new framing, not new stability bound" | medium |
+| Collins, Kumari, and Pestov, *The Consistency of the k-Nearest Neighbours Classifier in a Separable Metric Space* | 2020 | k-NN in metric spaces with tie comments | not a perturbation paper | prediction rule under metric-space assumptions | distributional / asymptotic | useful metric-space context and explicit handling of tie issues | low |
+| Ndiaye, *Stability, Calibration, and Privacy in Transductive Conformal Prediction* | 2022 | stability for conformal prediction | leave-one-out / transductive stability | calibration and coverage quantities | prediction-set validity / transductive | relevant because conformal literature uses stability language near LOO, but in a different guarantee regime | medium |
+| Liang and Barber, *Learning-Set Size Invariance and Stability for Conformal Classification* | 2023 | stability for conformal classification | training-set perturbations with coverage implications | prediction-set coverage | distributional / predictive inference | close modern literature line for stability certificates; related but not the same notion | medium |
+| Lee and Zhang, *A Framework for Designing Stable Conformal Prediction Methods* | 2025 | stable conformal design | leave-one-out style certificates | prediction-set coverage | predictive inference | relevant modern line for "stability certificates" language | medium |
+| Pournaderi and Xiang, *Training-Conditional Coverage for Distribution-Free Prediction with Many LOO Unstable Points* | 2024 | training-conditional coverage despite many unstable points | LOO-style instability | training-conditional coverage | predictive inference | useful cautionary comparison: LOO instability and prediction validity are not the same object as our finite worst-case witness | medium |
+
+## Reading Notes
+
+- The classical stability literature overwhelmingly studies generalization and
+  fresh-test evaluation under replace-one perturbations.
+- The deleted-estimate line is the closest predecessor for LOO-style
+  evaluation, but it still does not appear to study our explicit pointwise
+  finite-metric separation between LOO and adversarial replace-one.
+- The conformal literature provides modern motivation for distinguishing LOO-
+  based and replacement-based certificates, but the guarantee type is coverage,
+  not 0-1 prediction loss.
