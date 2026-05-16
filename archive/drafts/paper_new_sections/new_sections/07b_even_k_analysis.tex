@@ -1,0 +1,131 @@
+\section{Even-$k$ Analysis}
+\label{sec:even-k-analysis}
+
+Having established the odd-$k$ separation, we now examine the case of even
+$k$. The behavior differs in two ways: the signed margin is always an even
+integer, and the prediction threshold $M_k > 0$ coincides with exact ties
+($M_k = 0$ being decided by tie-breaking). This creates a structurally
+distinct regime.
+
+\subsection{An Even-$k$ Separation}
+
+For even $k = 2m$ with $m \ge 1$, the same metric space (points $a,b$ with
+$d(a,b) > 0$) admits a separation analogous to the odd case, but with a
+different margin profile.
+
+Define the ordered sample
+\[
+S_m^{\text{even}} \;=\; \big((a,0)_1,\ldots,(a,0)_m,\;
+                            (a,1)_1,\ldots,(a,1)_m,\;
+                            (b,0)_1,\ldots,(b,0)_m\big),
+\]
+of size $n = 3m$. Fix $k = 2m$ and query-label pair $(a,0)$.
+
+\begin{theorem}[Even-$k$ LOO/replace-one separation]
+\label{thm:even-k-separation}
+For every even $k = 2m$ with $m \ge 1$, the sample $S_m^{\text{even}}$
+satisfies
+\[
+\Delta_{\mathrm{loo}}(S_m^{\text{even}}, i) = 0 \quad \text{for every index } i,
+\]
+while there exists an index $j$ and a replacement point $z$ such that
+\[
+\Delta_{\mathrm{rep}}(S_m^{\text{even}}, j, z, a, 0) = 1.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Original prediction at $(a,0)$.} At query $a$, the top-$k$ neighbors are $m$ copies of $(a,0)$ and $m$ copies of $(a,1)$. The signed margin is
+\[
+M_k(S_m^{\text{even}}, a) = m(-1) + m(+1) = 0,
+\]
+and by the deterministic tie-breaking rule ($0 \prec 1$) the prediction is $0$, so the loss at $(a,0)$ is $0$.
+
+\textbf{LOO at an $(a,0)$ occurrence.} After deletion, the top-$k'$ at $a$ (with $k' = \min(2m, n-1)$) consists of $(m-1)$ copies of $(a,0)$, $m$ copies of $(a,1)$, and the first copy of $(b,0)$. The margin is
+\[
+M_{k'} = (m-1)(-1) + m(+1) + 1(-1) = 0,
+\]
+the prediction remains $0$ by tie-breaking, and the loss at $(a,0)$ is unchanged from $0$. Hence $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{LOO at an $(a,1)$ occurrence.} After deletion, the top-$k'$ at $a$ consists of $m$ copies of $(a,0)$, $(m-1)$ copies of $(a,1)$, and the first copy of $(b,0)$. The margin is
+\[
+M_{k'} = m(-1) + (m-1)(+1) + 1(-1) = -2,
+\]
+the prediction is $0$. The original loss at $(a,1)$ was $1$ (predicted $0$, true label $1$); after deletion the loss remains $1$. So $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{LOO at a $(b,0)$ occurrence.} After deletion, the top-$k'$ at $b$ consists of $(m-1)$ copies of $(b,0)$, $m$ copies of $(a,0)$, and the first copy of $(a,1)$. The margin is
+\[
+M_{k'} = (m-1)(-1) + m(-1) + 1(+1) = -(2m-2),
+\]
+which is $\le 0$ for all $m \ge 1$. The loss at $(b,0)$ is unchanged at $0$. Therefore $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{Replace-one instability.} Replace the first occurrence $(a,0)_1$ with $(a,1)$. The top-$k$ at $a$ now contains one copy of $(a,1)$ at the top, $(m-1)$ copies of $(a,0)$, and $m$ copies of $(a,1)$. The margin is
+\[
+M_k = 1(+1) + (m-1)(-1) + m(+1) = 2 > 0,
+\]
+so the prediction flips to $1$. The loss at $(a,0)$ goes from $0$ to $1$, giving $\Delta_{\mathrm{rep}} = 1$.
+\end{proof}
+
+\subsection{Structural Differences Between Odd and Even $k$}
+
+The odd and even constructions share the same metric space and the same
+replacement mechanism, but the margin analysis reveals a structural difference.
+
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+
+\item \textbf{Margin at the prediction threshold.}
+For odd $k$, the original margin is $-1$, which is strictly negative. The
+prediction reflects a genuine (if minimal) majority. For even $k$, the
+original margin is $0$, an exact tie; the prediction is determined solely
+by the tie-breaking convention. In this sense, the even-$k$ separation is
+``weaker'': it depends on the deterministic tie-breaking rule to stabilize
+the original prediction against LOO perturbations.
+
+\item \textbf{LOO stability margin.}
+For odd $k$, after deleting an $(a,0)$ occurrence, the margin remains $-1$
+(non-zero, no tie). For even $k$, the post-deletion margin becomes $0$
+(a tie), and LOO stability relies on the same tie-breaking rule to keep the
+prediction at $0$. If the tie-breaking rule were randomized, the even-$k$
+prediction after deletion would be $0$ or $1$ with equal probability,
+potentially breaking the LOO stability guarantee.
+
+\item \textbf{Replace-one effect.}
+In both cases, the margin
+increases by exactly $2$ after the replacement (from $-1$ to $+1$ for odd
+$k$; from $0$ to $+2$ for even $k$). The increment of $2$ is a consequence of
+flipping one label from $0$ to $1$ in the top-$k$: the contribution of that
+occurrence changes from $-1$ to $+1$.
+
+\end{enumerate}
+
+\subsection{Summary}
+\label{sec:even-k-summary}
+
+The even-$k$ separation is valid under the deterministic conventions of this
+paper, but it is qualitatively distinct from the odd-$k$ case.
+
+\begin{itemize}
+\item For {\em odd} $k$, the separation is robust to changes in tie-breaking:
+  the original margin is strictly negative, and LOO stability holds with a
+  strictly negative post-deletion margin.
+\item For {\em even} $k$, the separation relies on the deterministic
+  tie-breaking convention ($0\prec 1$) to keep the pre- and post-deletion
+  predictions at $0$. If tie-breaking is changed or randomized, the
+  separation may vanish.
+\end{itemize}
+
+Both cases demonstrate the same methodological point: LOO stability and
+replace-one stability are distinct notions that can diverge even in minimal
+finite metric configurations. The odd-$k$ case makes this point without
+invoking tie-breaking; the even-$k$ case shows that the divergence can also
+manifest {\em through} the tie-breaking mechanism. We leave as an open problem
+the construction of an even-$k$ separation that does {\em not} rely on
+tie-breaking (i.e., one in which the original margin is strictly negative
+or strictly positive).
+
+\begin{openproblem}
+Does there exist, for any even $k \ge 2$, a finite metric sample for
+deterministic $k$-NN in which the original prediction at the designated query
+is determined by a strict majority (margin $\neq 0$) and the
+LOO/replace-one separation nevertheless holds?
+\end{openproblem}

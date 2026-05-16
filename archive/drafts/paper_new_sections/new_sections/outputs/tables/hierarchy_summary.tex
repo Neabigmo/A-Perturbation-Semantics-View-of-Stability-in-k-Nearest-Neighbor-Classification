@@ -1,0 +1,20 @@
+% Hierarchy summary table: maps each pair of notions to a concise classification.
+\begin{table}[t]
+\centering
+\caption{Summary classification of stability notion pairs.}
+\label{tab:hierarchy-summary}
+\small
+\begin{tabularx}{\linewidth}{lccc}
+\toprule
+\textbf{Notion $A$} & \textbf{Notion $B$} & $A \Rightarrow B$? & $B \Rightarrow A$?\\
+\midrule
+Uniform delete+insert & Uniform replace-one & Yes (\Cref{prop:4.1}) & Open problem\\
+Pointwise delete-one (all queries) & Pointwise insert-one (fixed query) & No (\Cref{prop:del-not-impl-ins}) & No (\Cref{prop:ins-not-impl-del})\\
+Pointwise LOO & Pointwise replace-one & No (\Cref{thm:odd-k-separation}) & No \\
+Pointwise delete-one (all) & Pointwise LOO & Yes & No (\Cref{prop:loo-not-impl-del})\\
+Deterministic tie-break LOO & Randomized tie-break LOO & No (\Cref{prop:tie-mask}) & No \\
+Expected replace-one & Worst-case replace-one & No & Yes\\
+Fresh-test replace-one & Fixed-query replace-one & No & Yes\\
+\bottomrule
+\end{tabularx}
+\end{table}

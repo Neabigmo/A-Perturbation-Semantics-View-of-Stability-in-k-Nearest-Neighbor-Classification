@@ -1,9 +1,0 @@
-{
-  "task_id": "TASK-014",
-  "executor": "Codex local implementation",
-  "status": "completed",
-  "validation": {
-    "figure_command": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe experiments\\generate_paper_figures.py",
-    "pytest": "166 passed"
-  }
-}

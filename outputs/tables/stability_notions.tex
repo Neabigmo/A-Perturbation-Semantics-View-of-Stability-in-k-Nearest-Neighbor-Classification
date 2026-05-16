@@ -7,7 +7,7 @@ Notion & Perturbation & Evaluated at & Supremum over & Distribution? & Used for 
 \midrule
 delete-one & remove one occurrence & arbitrary query-label pair & indices and queries & no & uniform and pointwise perturbation analysis \\
 replace-one & swap one occurrence for adversarial labeled point & arbitrary query-label pair & indices, replacements, queries & no & strong local perturbation control \\
-add-one & append one occurrence & arbitrary query-label pair & added points and queries & no & decomposition of replace-one \\
+insert-one & insert one occurrence at position $j$ & arbitrary query-label pair & insertion positions, added points, queries & no & decomposition of replace-one \\
 LOO & delete one occurrence & that deleted occurrence & delete index only & no & cross-validation style local stability \\
 uniform stability & usually replace-one in classical literature & fresh test point or worst-case query & all samples & often yes & generalization bounds \\
 \bottomrule

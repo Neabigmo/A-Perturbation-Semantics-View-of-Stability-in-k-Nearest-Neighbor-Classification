@@ -1,20 +1,14 @@
 \begin{abstract}
-Algorithmic stability asks how much a learning rule changes when its training
-sample is perturbed. For local rules such as nearest neighbors, however, the
-phrase ``change one sample point'' hides several inequivalent operations:
-deleting an occurrence, replacing it by an adversarial labeled point,
-appending an occurrence, or deleting an occurrence and evaluating at that same
-occurrence as in leave-one-out validation. We develop a finite-sample
-stability calculus for deterministic $k$-nearest neighbors on finite metric
-spaces under explicit tie-breaking. The paper separates uniform perturbation
-relations from pointwise local phenomena: replace-one perturbations admit a
-clean delete-plus-add decomposition at the operation level, while leave-one-out
-stability need not control pointwise replace-one stability even for a two-point
-graph metric. We give an exact signed-margin characterization of when a
-deterministic $k$-NN prediction changes under a perturbation, visualize the
-resulting instability mechanisms, and provide reproducible finite-graph witness
-and certificate artifacts. Our odd-$k$ extension currently remains
-computational evidence rather than theorem-level lifting. These finite
-worst-case separations complement, rather than contradict, the classical
-distributional consistency theory of nearest-neighbor rules.
+Leave-one-out evaluation is often interpreted as evidence that a classifier is
+insensitive to individual training points.  We show that this interpretation
+fails for deterministic $k$-nearest-neighbor classification, because LOO
+deletion is tied to evaluation at the deleted point, whereas replacement
+robustness concerns arbitrary replacement and arbitrary query evaluation.  For
+every odd $k \ge 1$, and for even $k$ under deterministic tie-breaking, we
+construct finite metric samples for which all LOO indicators vanish but a single
+replace-one perturbation flips the prediction at a designated query.  The
+separation is governed by a signed top-$k$ vote margin: LOO perturbations can
+leave the margin on the safe side of the decision threshold, while a targeted
+replacement crosses it.  Experiments and a margin-based diagnostic show that
+this phenomenon is observable beyond hand-crafted witnesses.
 \end{abstract}

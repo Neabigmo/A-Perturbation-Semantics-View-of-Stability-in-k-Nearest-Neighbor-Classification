@@ -20,6 +20,14 @@ paper/*.fls
 paper/*.log
 paper/*.out
 paper/*.synctex.gz
+paper/main.aux
+paper/main.bbl
+paper/main.blg
+paper/main.fdb_latexmk
+paper/main.fls
+paper/main.log
+paper/main.out
+paper/main.pdf
 main.aux
 main.bbl
 main.blg
@@ -29,3 +37,10 @@ main.log
 main.out
 main.pdf
 main.synctex.gz
+*.synctex(busy)
+*.tmp.*
+CODEX_MASTER_ORCHESTRATION.md
+AGENTS.md
+NEXT_PHASE_PAPER_PLAN_FOR_CODEX.md
+修改意见1.md
+示例fig/

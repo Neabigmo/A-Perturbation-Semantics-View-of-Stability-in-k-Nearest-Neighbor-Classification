@@ -1,0 +1,18 @@
+% Hierarchy summary table: maps each pair of notions to a concise classification.
+% Only includes relationships whose direction is correctly established.
+\begin{table}[t]
+\centering
+\caption{Summary classification of stability notion pairs.}
+\label{tab:hierarchy-summary}
+\small
+\begin{tabularx}{\linewidth}{lccc}
+\toprule
+\textbf{Notion $A$} & \textbf{Notion $B$} & $A \Rightarrow B$? & $B \Rightarrow A$?\\
+\midrule
+Uniform delete+insert & Uniform replace-one & Yes (\Cref{prop:4.1}) & Open\\
+Pointwise LOO & Pointwise replace-one & No (\Cref{thm:odd-k-separation}) & No\\
+Pointwise delete-one (all) & Pointwise LOO & Yes & No\\
+Expected replace-one & Worst-case replace-one & No & Yes\\
+\bottomrule
+\end{tabularx}
+\end{table}

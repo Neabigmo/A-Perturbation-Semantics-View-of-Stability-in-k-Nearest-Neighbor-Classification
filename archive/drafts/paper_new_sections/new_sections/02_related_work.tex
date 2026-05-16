@@ -1,0 +1,77 @@
+\section{Related Work}
+\label{sec:related-work}
+
+\subsection{Algorithmic Stability and Generalization}
+
+The modern theory of algorithmic stability was formalized by Bousquet and
+Elisseeff \cite{bousquet2002stability}, who defined several stability notions
+centered on replace-one perturbations and fresh-test evaluation, and used them
+to derive generalization bounds. Kutin and Niyogi \cite{kutin2002almost}
+expanded the landscape with weaker and almost-everywhere variants, while
+Feldman and Vondr\'ak \cite{feldman2019high} and later Bousquet, Klochkov, and
+Zhivotovskiy \cite{bousquet2020sharpening} obtained sharp high-probability
+bounds.  Subsequent work connected stability to learnability and uniform
+convergence, clarifying when stability is not merely sufficient but also
+structurally related to learnability \cite{shalev2010learnability}. Mukherjee,
+Niyogi, Poggio, and Rifkin \cite{mukherjee2006learning} further established that
+stability is sufficient for generalization and, for empirical risk minimization,
+necessary and sufficient for consistency. Hardt,
+Recht, and Singer \cite{hardt2016train} further showed that algorithmic
+stability explains generalization for optimization-based learning rules such as
+stochastic gradient descent. Our work is orthogonal to this line: we do not
+derive generalization bounds, but instead provide a microscopic perturbation
+calculus that clarifies which stability notion is being discussed in the first
+place.  The classical literature mainly uses replace-one or delete-one with
+fresh-test evaluation; we show that LOO evaluation (common in practice) can
+give a qualitatively different picture.
+
+\subsection{Nearest-Neighbor Classification and Deleted Estimates}
+
+The nearest-neighbor line begins with Fix and Hodges \cite{fix1951discriminatory}
+and the classical risk and consistency results of Cover and Hart
+\cite{cover1967nearest,cover1968estimation}, together with the consistency
+framework formalized by Stone \cite{stone1977consistent}.  Those works study
+statistical performance under distributional sampling rather than worst-case
+single-perturbation effects.  Closer to our setting are the deleted-estimate
+and local-rule analyses of Rogers and Wagner \cite{rogers1978finite} and
+Devroye and Wagner \cite{devroye1979distribution,devroye1979local}, which
+establish finite-sample bounds for local discrimination rules using
+leave-one-out style evaluation.  These are important precedents, but their
+goal is to bound expected error, not to separate LOO from adversarial
+replace-one at the level of fixed finite metric witnesses.
+
+\subsection{Leave-One-Out and Conformal Stability}
+
+Kearns and Ron \cite{kearns1999algorithmic} connected algorithmic stability
+with leave-one-out cross-validation, already emphasizing that CV-style
+perturbation has its own logic.  Recent conformal prediction work makes related
+distinctions operational, often in service of coverage certificates rather than
+0--1 prediction loss.  Examples include training-conditional guarantees
+\cite{liang2023algorithmic,pournaderi2024training} and related stability
+analyses.  Our results complement this line by showing
+that even the simpler 0--1 loss setting already exhibits a structural gap
+between LOO and replacement-based control, before any distributional or
+coverage considerations enter.
+
+\subsection{Finite Metric Witnesses and Local Learning Rules}
+
+Metric-space analyses of $k$-NN typically appear in consistency or geometric
+generality results \cite{collins2020consistency} rather than
+perturbation-separation examples.  To our knowledge, no prior work exhibits
+a finite graph-metric sample whose explicit purpose is to show that
+fixed-sample LOO stability need not control fixed-sample adversarial replace-one
+stability for deterministic $k$-NN under the conventions used here.  The
+separation we prove is new in its specificity.
+
+\subsection{What the Paper Achieves}
+
+The paper's distinctive contribution lies in combining (a) a systematic
+perturbation calculus that separates perturbation operations from evaluation
+points, (b) an exact uniform calculus relating those operations, (c) a general
+separation theorem valid for all odd $k \ge 3$ (and even $k$ under
+tie-breaking), (d) an abstract framework extending beyond $k$-NN, and
+(e) reproducible experimental evidence that the separation occurs on real and
+synthetic data.  Earlier computational search infrastructure
+\cite{codex2025codex} provided the $1$-NN witness and candidate patterns for
+larger $k$, but left the general odd-$k$ statement as a conjecture.  The present
+paper upgrades that conjecture to a theorem.

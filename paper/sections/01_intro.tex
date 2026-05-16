@@ -1,102 +1,85 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Algorithmic stability is often introduced through a single intuitive gesture:
-change one training example and ask whether the learner changes much. For
-global smooth learners this slogan is usually harmless. For local rules such as
-deterministic $k$-nearest neighbors, it is already underspecified. One can
-delete an occurrence, append a new occurrence, replace an occurrence by an
-adversarially chosen labeled point, or delete an occurrence and then evaluate
-the modified classifier exactly at that removed occurrence, as in leave-one-out
-(LOO) validation. These operations are related, but they are not identical. A
-substantial amount of avoidable confusion enters the discussion when they are
-treated as interchangeable.
+\subsection{The leave-one-out stability trap}
 
-This paper is about making those distinctions explicit in the smallest setting
-where they become mathematically sharp: deterministic $k$-NN on finite metric
-spaces with ordered samples, duplicate occurrences allowed, conflicting labels
-allowed, and tie-breaking frozen once and for all. The finite setting strips
-away distributional averaging and exposes the local combinatorics directly. In
-that regime we can ask a very concrete question: when does a single
-perturbation change the prediction, and what kinds of perturbations are
-provably stronger than others?
+Practitioners often read low leave-one-out cross-validation error as evidence
+that a local classifier is not overly sensitive to any single training point.
+The reasoning seems natural: if removing a point barely changes the prediction
+at that same point, the classifier must be stable.  This paper argues that the
+inference is invalid for deterministic $k$-nearest-neighbor classification, and
+that the flaw is conceptual, not asymptotic.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{outputs/figures/stability_notions_diagram.pdf}
-    \caption{The paper separates perturbation operations by what changes in the
-    sample and where the post-perturbation classifier is evaluated. This
-    distinction is the organizing device for the rest of the draft.}
-    \label{fig:stability-notions}
-\end{figure}
+The central question is simple but easy to overlook:
 
-\Cref{fig:stability-notions} previews the perspective. Delete-one,
-add-one, replace-one, and LOO belong to the same family, but they move along
-different axes. Replace-one is strongest at the operation level because it can
-be factored into a deletion followed by an insertion; LOO is special because it
-evaluates at the removed occurrence itself. Once these axes are disentangled,
-two kinds of results emerge. First, there is a clean \emph{uniform calculus}:
-replace-one control can be upper bounded by delete-one plus add-one control.
-Second, there are unexpectedly sharp \emph{pointwise separations}: a sample can
-be perfectly LOO-stable while still being highly unstable under replace-one.
+\begin{quote}
+When a perturbation is applied to the training sample, what exactly has been
+perturbed, and where is the perturbed predictor evaluated?
+\end{quote}
 
-The smallest explicit witness already appears for deterministic $1$-NN on a
-two-vertex graph metric. In that example, deleting either occurrence does not
-change the loss at the deleted occurrence, but replacing one occurrence by an
-adversarially labeled duplicate flips the prediction at a chosen query point.
-The witness is tiny enough to verify by hand, yet it already captures the main
-moral of the paper: LOO and replace-one are not merely different formalizations
-of the same local phenomenon.
+Leave-one-out (LOO) couples these two choices: the perturbation is delete-one,
+and the evaluation point is fixed to the deleted occurrence.  Replacement
+robustness (replace-one), in contrast, decouples them: any sample occurrence
+may be replaced by any labeled point, and the evaluation query is arbitrary.
+This paper shows that this difference in \emph{perturbation semantics} produces
+a sharp structural separation between the two notions for deterministic $k$-NN,
+for every $k \ge 1$.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/minimal_1nn_witness_before_after.pdf}
-    \caption{The minimal hand-checkable $1$-NN witness. The unperturbed sample
-    is LOO-stable at both occurrences, while a replace-one perturbation changes
-    the prediction at a selected query. Minimality of the two-vertex pattern is
-    currently supported by computational certificates rather than by a formal
-    impossibility proof.}
-    \label{fig:minimal-witness}
-\end{figure}
+\subsection{A two-point preview}
 
-Our contributions are therefore best read as a controlled bundle rather than a
-single theorem.
+Before developing the general machinery, we give the simplest possible witness.
+Consider a metric space with two vertices $a,b$ joined by a single edge, and
+the ordered sample
+\[
+S = \big((a,0),\;(b,0)\big).
+\]
+
+\paragraph{LOO is zero.}
+Delete the first occurrence $(a,0)$ and evaluate at $a$.  The sole remaining
+neighbor $(b,0)$ votes $0$, so the loss at $(a,0)$ is unchanged.  The same
+holds for the second occurrence.  Hence $\Delta_{\mathrm{loo}}(S,i)=0$ for
+$i=1,2$.
+
+\paragraph{Replace-one flips.}
+Now replace the first occurrence with $(a,1)$.  The perturbed sample is
+$((a,1),(b,0))$.  At query $a$, the nearest neighbor is now $(a,1)$, so the
+prediction flips from $0$ to $1$.  The loss at $(a,0)$ changes from $0$ to
+$1$, giving $\Delta_{\mathrm{rep}}=1$.
+
+The separation already appears in a two-point metric space with the simplest
+possible classifier.  No asymptotics, randomness, or high-dimensional geometry
+is needed.  The rest of the paper generalises this mechanism to all $k \ge 1$.
+
+\subsection{Contributions}
+
 \begin{enumerate}[leftmargin=*,label=(\arabic*)]
-    \item We formalize the perturbation vocabulary for deterministic finite
-    $k$-NN, with explicit conventions for ordered samples, duplicate
-    occurrences, conflicting labels, and tie-breaking.
-    \item We prove a uniform perturbation relation showing that replace-one can
-    be decomposed into delete-one plus add-one at the loss level.
-    \item We derive an exact signed-margin criterion for when a deterministic
-    $k$-NN prediction changes after a perturbation. This makes the instability
-    mechanism transparent: the label vote inside the ordered top-$k$ neighborhood
-    must cross zero.
-    \item We give an explicit finite metric separation for deterministic $1$-NN:
-    pointwise LOO stability does not control pointwise replace-one stability.
-    The witness itself is theorem-level; the current minimality claim remains a
-    computational certificate.
-    \item We provide reproducible odd-$k$ gadget candidates and publication
-    assets that keep theorem statements, computational certificates, and
-    conjectural lifting patterns cleanly separated.
+    \item \textbf{Perturbation semantics.}  We formalize delete-one,
+        insert-one, replace-one, and leave-one-out as distinct operations
+        coupled to distinct evaluation-point conventions
+        (\Cref{sec:perturbation-semantics}).  The key distinction is that LOO
+        is not simply delete-one: it is delete-one with the evaluation point
+        constrained to be the deleted occurrence.
+    \item \textbf{Uniform perturbation calculus.}  Replace-one decomposes into
+        delete-one followed by insert-one, yielding the bound
+        $\beta_{\mathrm{rep}}(n) \le \beta_{\mathrm{del}}(n) +
+        \beta_{\mathrm{ins}}(n-1)$ at the uniform level
+        (\Cref{sec:uniform-calculus}).  LOO cannot substitute for delete-one
+        control in this bound.
+    \item \textbf{Margin mechanism and separations.}  For deterministic $k$-NN,
+        a prediction changes if and only if the signed top-$k$ vote margin
+        crosses zero (\Cref{sec:margin-mechanism}).  Using this criterion, we
+        construct LOO-stable but replace-one-unstable samples for every odd $k
+        \ge 1$ (\Cref{sec:odd-k-separation}) and for even $k$ under
+        deterministic tie-breaking (\Cref{sec:even-k-separation}).
+    \item \textbf{Diagnostic and empirical evidence.}  A margin-based
+        diagnostic ($|\margin_k(S,x)| \le 2$) detects queries vulnerable to
+        single-replacement flips.  Experiments on synthetic graph metrics and
+        UCI tabular data show that the LOO/replace-one gap is not confined to
+        hand-crafted witnesses but appears at measurable frequency
+        (\Cref{sec:experiments}).
 \end{enumerate}
 
-The paper is intentionally modest about what it does \emph{not} establish. We
-do not claim a new generalization bound. We do not claim that the current
-odd-$k$ search outputs constitute a theorem. We do not claim that finite
-worst-case instability contradicts classical consistency results for nearest
-neighbors. Instead, we offer a definition-level and mechanism-level account of
-single-perturbation behavior that can live compatibly alongside the classical
-distributional theory.
-
-The reader's map is simple. \Cref{sec:related-work} positions the paper
-relative to classical algorithmic stability, deleted-estimate, and conformal
-prediction literatures. \Cref{sec:definitions} fixes the deterministic finite
-setting and notation. \Cref{sec:uniform-calculus} proves the uniform
-delete/add/replace relation. \Cref{sec:knn-criterion} gives the exact
-deterministic $k$-NN perturbation criterion and the corresponding visual
-microscope for instability. \Cref{sec:finite-separation} states the minimal
-$1$-NN separation result and its certificate boundary. \Cref{sec:k-extension}
-summarizes what the current odd-$k$ gadget search does and does not justify.
-\Cref{sec:consistency} explains why these results are compatible with
-consistency and prediction-calibration perspectives, and \Cref{sec:discussion}
-collects the main limitations and next steps.
+\noindent The paper is not a critique of leave-one-out cross-validation as a
+practical tool.  It is a precise statement about the semantic boundary of what
+LOO can certify: LOO is a coupled deletion diagnostic, not a certificate of
+replacement robustness.

@@ -13,17 +13,18 @@ where each $x_i \in X$ lies in a finite metric space $(X, d)$ and each label $y_
 
 The order of the tuple is semantically relevant only for deterministic tie-breaking. Two identical labeled points appearing at different indices are treated as distinct sample occurrences.
 
-\begin{itemize}
-    \item \textbf{Duplicate points are allowed.}
-    \item \textbf{Conflicting labels at the same point are allowed.}
-\end{itemize}
+\begin{note}[Delete-One and LOO edge cases]
+The delete-one and LOO indicators are defined only for samples with at least two occurrences ($n \ge 2$). For $n=1$, the $k' = \min(k, n-1) = 0$, and the $0$-NN predictor is undefined; we therefore exclude this case from stability analysis.
+\end{note}
 
-Any theorem or experiment that excludes duplicates or conflicts must state this explicitly.
+\begin{note}[Duplicate points and conflicting labels]
+Duplicate points are allowed. Conflicting labels at the same point are allowed. Any theorem or experiment that excludes duplicates or conflicts must state this explicitly.
+\end{note}
 
-\paragraph{Definition hygiene.}
-The distinctions above are not bookkeeping trivia. Ordered duplicates,
-conflicting labels, and deterministic tie-breaking are exactly the places where
-local instability can hide. Several later examples collapse or become
+\paragraph{Separation of definitions.}
+The conventions above are consequential for the results that follow. Ordered duplicates,
+conflicting labels, and deterministic tie-breaking are the places where
+local instability can arise. Several examples collapse or become
 ambiguous if these conventions are left implicit.
 
 \begin{definition}[Finite Metric Space]
@@ -63,6 +64,7 @@ If class votes tie after the first $k$ ordered neighbors are selected, the predi
 \end{note}
 
 \begin{definition}[$k$-NN Prediction]
+\label{def:knn-prediction}
 Given $k \in \mathbb{N}$ with $1 \le k \le n$, the deterministic $k$-NN predictor $h_S^{(k)}(x)$ is obtained by:
 \begin{enumerate}
     \item ordering the sample occurrences by the deterministic neighbor rule above;
@@ -92,12 +94,12 @@ S^{-i} = \big((x_1, y_1), \ldots, (x_{i-1}, y_{i-1}), (x_{i+1}, y_{i+1}), \ldots
 \]
 \end{definition}
 
-\begin{definition}[Add-One]
-For any labeled point $z = (x, y) \in X \times \{0,1\}$, define
+\begin{definition}[Insert-One]
+For any labeled point $z = (x, y) \in X \times \{0,1\}$ and any insertion position $j \in \{1, \ldots, n+1\}$, define
 \[
-S \oplus z
+S \oplus_j z
 \]
-as the ordered tuple obtained by appending $z$ at the end.
+as the ordered tuple obtained by inserting $z$ at position $j$ (shifting existing occurrences at indices $\ge j$ to the right by one).
 \end{definition}
 
 \begin{definition}[Replace-One]
@@ -108,14 +110,14 @@ S^{i \leftarrow z}
 as the ordered tuple obtained by replacing the $i$-th occurrence of $S$ with $z$.
 \end{definition}
 
-In v0.1 worst-case stability definitions, the replacement point ranges over all labeled points in $X \times \{0,1\}$, not over a data-generating distribution.
+In the worst-case stability definitions used here, the replacement point ranges over all labeled points in $X \times \{0,1\}$, not over a data-generating distribution.
 
 \subsection{Stability Notions}
 
 Unless otherwise stated, all pointwise notions are evaluated with fixed $k$, fixed metric space, fixed tie-breaking rule, and fixed loss defined above.
 
-\begin{note}
-Pointwise stability statements concern a fixed training sample, a fixed perturbation, and a fixed evaluation pair $(x, y)$. Expected stability refers to the expectation under an explicitly specified data-generating distribution. Uniform stability is the supremum of the corresponding indicator over all valid ordered training tuples, all allowed perturbation choices, and all evaluation pairs.
+\begin{note}[Uniform stability sample-size convention]
+Pointwise stability statements concern a fixed training sample, a fixed perturbation, and a fixed evaluation pair $(x, y)$. Expected stability refers to the expectation under an explicitly specified data-generating distribution. Uniform stability is the supremum of the corresponding indicator over all valid ordered training tuples of a fixed size $n$, all allowed perturbation choices, and all evaluation pairs. We denote uniform delete-one and insert-one bounds by $\beta_{\del}(n)$ and $\beta_{\ins}(n)$ respectively.
 \end{note}
 
 \begin{definition}[Pointwise Delete-One Stability Indicator]
@@ -137,12 +139,12 @@ For index $i$, replacement $z$, and query-label pair $(x, y)$, define
 \]
 \end{definition}
 
-\begin{definition}[Pointwise Add-One Stability Indicator]
-For added labeled point $z$ and query-label pair $(x, y)$, define
+\begin{definition}[Pointwise Insert-One Stability Indicator]
+For insertion position $j$ and added labeled point $z$, define
 \[
-\Delta_{\mathrm{add}}(S, z, x, y)
+\Delta_{\mathrm{ins}}(S, j, z, x, y)
 =
-\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S \oplus z}^{(k)}, (x, y)) \right|.
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S \oplus_j z}^{(k)}, (x, y)) \right|.
 \]
 \end{definition}
 

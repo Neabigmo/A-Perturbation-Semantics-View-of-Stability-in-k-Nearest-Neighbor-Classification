@@ -1,0 +1,37 @@
+\begin{table}[t]
+\centering
+\caption{Established stability relationships. Each row states an implication
+between stability notions, its status (theorem or counterexample), and the
+relevant reference. Rows with uncertain direction or insufficient evidence
+are omitted.}
+\label{tab:stability-hierarchy}
+\small
+\begin{tabularx}{\linewidth}{lcl}
+\toprule
+\textbf{Relationship} & \textbf{Status} & \textbf{Reference}\\
+\midrule
+Uniform delete+insert
+$\Rightarrow$ uniform replace-one & Theorem & \Cref{prop:4.1}\\
+\addlinespace
+Pointwise LOO
+$\Rightarrow$ pointwise replace-one & Counterexample & \Cref{thm:odd-k-separation},
+\Cref{thm:even-k-separation}\\
+Pointwise replace-one
+$\Rightarrow$ pointwise LOO & Counterexample & Different evaluation
+quantification\\
+\addlinespace
+Pointwise delete-one (all queries)
+$\Rightarrow$ pointwise LOO & Theorem & Definition chase; LOO is a
+special case\\
+Pointwise LOO
+$\Rightarrow$ pointwise delete-one (all queries) & Counterexample & Different
+evaluation point\\
+\addlinespace
+Expected replace-one
+$\Rightarrow$ worst-case replace-one & Counterexample & Standard; rare
+adversarial configurations\\
+Worst-case replace-one
+$\Rightarrow$ expected replace-one & Theorem & Supremum dominates expectation\\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,153 @@
+\section[Extensions to Additive Local Vote Rules]{Extensions to Additive Local Vote Rules}
+\label{sec:local-vote-framework}
+
+The preceding sections develop the perturbation calculus entirely for
+deterministic $k$-NN. We now show that two of the structural results --- the
+margin-crossing criterion and the delete-plus-insert decomposition --- extend
+to a broader class of local vote rules. Throughout this section, the
+statements are more general but the proofs are no deeper; we record them here
+to delimit what is $k$-NN-specific and what is not.
+
+\subsection{Definition}
+
+\begin{definition}[Deterministic Local Vote Rule]
+\label{def:dlvr}
+A {\em deterministic local vote rule (DLVR)} on a finite metric space $(X, d)$
+is specified by a tuple
+\[
+\mathcal{R} = \big(N, w, \tau\big)
+\]
+where:
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+  \item $N(S, x)$ is a {\em neighborhood selection function} that, given an
+    ordered sample $S$ and query $x \in X$, returns an ordered tuple of
+    occurrence indices $N(S,x) \subseteq \{1,\ldots,|S|\}$.
+  \item $w : X \times X \to \mathbb{R}_{\ge 0}$ is a {\em weight function}
+    assigning non-negative weight $w(x, x')$ to candidate point $x'$
+    relative to query $x$.
+  \item $\tau \ge 0$ is a {\em vote threshold}: the signed margin is
+    $M_{\mathcal{R}}(S,x) = \sum_{i \in N(S,x)} w(x, x_i) \cdot (2y_i - 1)$,
+    and the prediction is $1$ if $M_{\mathcal{R}}(S,x) > \tau$, $0$ otherwise.
+    Ties ($M = \tau$) are resolved to $0$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Instantiations}
+
+\paragraph{Deterministic $k$-NN.}
+For $k$-NN:
+$N(S,x) = \text{first } k \text{ occurrences by } (d(x,\cdot), \text{index})$,
+$w(x,x') = 1$, $\tau = 0$,
+recovering \Cref{def:knn-prediction}.
+
+\paragraph{Weighted $k$-NN.}
+Let $w(x,x') = 1/(d(x,x') + \varepsilon)$ for a small fixed $\varepsilon > 0$.
+The neighborhood $N(S,x)$ selects the $k$ nearest occurrences, but each vote
+is weighted by distance.
+
+\paragraph{Radius-neighbor majority vote.}
+Fix $r > 0$ and let $N(S,x) = \{i : d(x, x_i) \le r\}$ with uniform weights
+$w=1$ and threshold $\tau=0$.
+
+\subsection{Generalized Margin Criterion}
+
+For a DLVR with additive aggregation, the prediction is determined by
+the signed margin $M_{\mathcal{R}}(S, x)$.
+
+\begin{proposition}[Generalized margin crossing]
+\label{prop:generalized-margin}
+Let $\mathcal{R}$ be a DLVR with additive aggregation and threshold $\tau$.
+For any two samples $S, S'$ over the same metric space,
+$h_{S,\mathcal{R}}(x) \neq h_{S',\mathcal{R}}(x)$
+if and only if
+\[
+\big(M_{\mathcal{R}}(S, x) \le \tau < M_{\mathcal{R}}(S', x)\big)
+\;\text{or}\;
+\big(M_{\mathcal{R}}(S', x) \le \tau < M_{\mathcal{R}}(S, x)\big).
+\]
+\end{proposition}
+
+\begin{proof}
+By definition, the prediction is $1$ exactly when the signed margin exceeds
+$\tau$, and $0$ when it is at or below $\tau$.
+\end{proof}
+
+This is the abstract version of \Cref{prop:5.1}. Its value is that it reduces
+all perturbation analysis to tracking how $M_{\mathcal{R}}(S, x)$ changes.
+
+\begin{remark}[Perturbation radius]
+\label{rem:perturbation-radius}
+For a DLVR, the {\em perturbation radius} is the smallest distance from $x$ at
+which a replacement point can change the margin. For $k$-NN with uniform
+weights, if the replaced occurrence is not in $N_k(S,x)$, the radius is
+bounded by the distance to the $(k+1)$-st nearest neighbor. If it is inside
+$N_k(S,x)$, the analysis must account for the promoted $(k+1)$-st neighbor.
+The margin certificate below provides a sufficient condition for immunity
+without an explicit radius.
+\end{remark}
+
+\begin{remark}[Stability certificate via margin gap]
+\label{rem:margin-certificate}
+Let $\mathcal{R}$ be a local vote rule with bounded weight function
+$0 \le w(x,x') \le w_{\max}$. If for query $x$ and sample $S$,
+every occurrence within distance $\rho$ of $x$ has label $y_i$ satisfying
+$|M_{\mathcal{R}}(S, x) - \tau| > 2 w_{\max}$, then no single replacement at
+distance $>\rho$ can change the prediction at $x$. The reasoning is that
+a replacement outside $\rho$ cannot change $N(S,x)$, and a label flip changes
+the margin by at most $2 w_{\max}$.
+\end{remark}
+
+\begin{remark}[Vulnerability condition]
+\label{rem:vulnerability}
+Conversely, if there exists an occurrence $i$ in $N(S,x)$ and a replacement
+$(x', y')$ with $d(x, x') \le \rho$ such that
+$|M_{\mathcal{R}}(S, x) - \tau| \le w(x, x_i) \cdot |(2y_i-1) - (2y'-1)|$,
+then the replacement can change the prediction. For a label flip
+($y' \neq y_i$), the net margin change is $2 w(x, x_i)$ (assuming
+$w(x,x') \ge w(x,x_i)$), so any query with margin gap at most $2 w_{\max}$
+is potentially vulnerable.
+\end{remark}
+
+\subsection{Uniform Calculus for DLVRs}
+
+The delete-plus-insert decomposition of \Cref{prop:4.1} extends to any DLVR
+whose prediction is determined by a bounded loss function, because the
+triangle inequality argument does not reference any $k$-NN-specific structure.
+
+\begin{proposition}[Uniform calculus for DLVRs]
+\label{prop:dlvr-calculus}
+Let $\mathcal{R}$ be any DLVR and $\ell$ a bounded loss. If delete-one
+stability is uniformly bounded by $\beta_{\mathrm{del}}(n)$ and insert-one
+stability by $\beta_{\mathrm{ins}}(n-1)$, then replace-one stability is
+bounded by $\beta_{\mathrm{del}}(n) + \beta_{\mathrm{ins}}(n-1)$.
+\end{proposition}
+
+\begin{proof}
+Identical to the proof of \Cref{prop:4.1}. Fix $S,i,z,(x,y)$. Let
+$T = S^{-i}$. Then $S^{i\leftarrow z} = T \oplus_i z$, and the triangle
+inequality on the loss gives the bound.
+\end{proof}
+
+Thus the uniform calculus is a property of the perturbation operations
+themselves, independent of the specific voting rule.
+
+\subsection{LOO/Replace-One Separation for DLVRs}
+
+The separation results of \Cref{thm:odd-k-separation} and
+\Cref{thm:even-k-separation} are specific to $k$-NN because they rely on the
+combinatorics of the ordered top-$k$ neighborhood. Whether analogous
+separations exist for other DLVRs is an open question.
+
+\begin{definition}[Replacement sensitivity]
+A DLVR $\mathcal{R}$ is {\em replacement-sensitive} at query $x$ if there
+exist samples $S, S'$ differing by a single replacement at index $i$ such
+that $N(S,x) \neq N(S',x)$ or the label composition of $N(S,x)$ changes.
+\end{definition}
+
+\begin{openproblem}
+Characterize the class of DLVRs for which the LOO/replace-one separation
+(\Cref{thm:odd-k-separation}) holds. Is it exactly the class of rules whose
+margin function $M_{\mathcal{R}}$ can change by at least $2 \cdot
+\min_i w(x,x_i)$ under a single replacement, while remaining invariant under
+any single deletion at the evaluation point?
+\end{openproblem}

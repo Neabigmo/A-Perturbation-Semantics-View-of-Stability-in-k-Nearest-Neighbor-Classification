@@ -1,55 +1,246 @@
-\section[General k and Gadget Candidates]{General $k$ and Gadget Candidates}
+\section{Odd-$k$ and Even-$k$ Separations}
 \label{sec:k-extension}
 
-The $1$-NN witness isolates the conceptual point cleanly, but it is natural to
-ask whether the same separation pattern persists for larger odd values of $k$.
-Our current repository contains a bounded finite search for odd-$k$ gadget
-candidates, together with plots and machine-readable output. What it does not
-yet contain is a fully formal lifting theorem. This section is written to make
-that status transparent.
+The two-point $1$-NN witness of \Cref{sec:finite-separation} shows that LOO
+stability and replace-one stability are not interchangeable for $k=1$. A natural
+question is whether the same phenomenon persists for larger $k$. We answer this
+question in the affirmative: a general construction works for every odd $k \ge
+3$, and an analogous (but tie-breaking-dependent) construction works for even
+$k$.
 
-The search heuristic is motivated by a repeated-occurrence amplification idea.
-If a $1$-NN witness works because one decisive nearest occurrence can be
-replaced, then for odd $k$ one may hope to replicate that decisive role across
-several tightly controlled occurrences so that LOO remains benign while a
-targeted replace-one move still crosses the top-$k$ signed margin. The search
-pipeline explores deterministic finite samples designed around this pattern.
+\subsection{Odd-$k$ Separation}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.86\linewidth]{outputs/figures/k_gadget_candidates.pdf}
-    \caption{Representative computational candidates for odd-$k$ separations.
-    These outputs are evidence for a plausible lifting pattern, not theorem
-    statements.}
-    \label{fig:k-gadget-candidates}
-\end{figure}
+Let $k = 2m+1$ for an integer $m \ge 1$. Let the metric space consist of two
+distinct points $a$ and $b$ with $d(a,b) > 0$; any metric space with at least
+two points suffices.
 
-\input{outputs/tables/k_gadget_candidates.tex}
+Define the ordered sample
+\[
+S_m \;=\; \big((a,0)_1,\; \ldots,\; (a,0)_{m+1},\;
+          (a,1)_1,\; \ldots,\; (a,1)_{m},\;
+          (b,0)_1,\; \ldots,\; (b,0)_{m}\big),
+\]
+where subscripts track the occurrence index within the ordered tuple.
+The sample has size $n = (m+1) + m + m = 3m+1$.
 
-The computational record suggests the following formulation.
+Fix the query-label pair $(x,y) = (a,0)$ and the neighborhood size $k = 2m+1$.
 
-\begin{conjecture}[Odd-$k$ repeated-occurrence lifting]
-\label{conj:odd-k-lifting}
-For every odd $k \ge 1$, there exists a deterministic finite metric sample for
-$k$-NN such that pointwise LOO stability holds at the designated occurrences
-while pointwise replace-one instability occurs at a chosen query-label pair.
-\end{conjecture}
+\begin{theorem}[Odd-$k$ LOO/replace-one separation]
+\label{thm:odd-k-separation}
+For every odd $k = 2m+1$ with $m \ge 1$, the sample $S_m$ satisfies
+\[
+\Delta_{\mathrm{loo}}(S_m, i) = 0 \qquad \text{for every index } i,
+\]
+while there exists an index $j$ and a replacement point $z$ such that
+\[
+\Delta_{\mathrm{rep}}(S_m, j, z, a, 0) = 1.
+\]
+Thus, pointwise LOO stability does not imply pointwise replace-one stability
+for deterministic $k$-NN with odd $k \ge 3$.
+\end{theorem}
 
-Why not state this as a theorem? Because the present evidence is still a search
-result plus a design heuristic. The candidate families for $k=3,5,7$ are real
-and reproducible, but the repository does not yet contain a general proof that
-the construction scales to all odd $k$, nor a proof that the searched examples
-capture the true minimal combinatorics.
+\begin{proof}
+We analyze the margin behavior at the query $a$ and at each deleted occurrence.
+Recall from \Cref{prop:5.1} that a deterministic $k$-NN prediction changes
+if and only if the signed vote margin $M_k(S, x)$ crosses zero.
 
-That said, the candidates are still scientifically useful. First, they test the
-robustness of the mechanism seen in \Cref{prop:two-point-separation}: the
-separation is not obviously a one-neighbor anomaly. Second, they tell us which
-features seem structurally important for any future proof, namely repeated local
-blocks, controlled vote margins, and deterministic tie-sensitive neighbor
-ordering. Third, they warn us that an honest paper should keep a clear gradient
-of claim strength: theorem, computational certificate, conjecture.
+\paragraph{Original prediction at $(a,0)$.}
+At query $a$, the ordered neighbors are sorted by distance then occurrence index.
+All occurrences at $a$ are at distance $0$; all occurrences at $b$ are at
+distance $d(a,b) > 0$. The deterministic order therefore selects all
+$(m+1)$ copies of $(a,0)$ first, then all $m$ copies of $(a,1)$, giving exactly
+$k = 2m+1$ neighbors. The signed margin is
+\[
+M_k(S_m, a) = (m+1)(-1) + m(+1) = -1 < 0,
+\]
+so the classifier predicts $0$ at $a$. Hence the loss at $(a,0)$ is $0$.
 
-Even-$k$ appears subtler. Because the vote boundary already sits at a tied
-margin, deterministic label-order tie-breaking plays a larger role, and the
-search space is less cleanly explained by odd-margin amplification. We therefore
-make no even-$k$ theorem claim and no impossibility claim here.
+\paragraph{LOO at an $(a,0)$ occurrence.}
+Delete the $i$-th copy of $(a,0)$ and evaluate at the deleted occurrence
+$(a,0)$. After deletion the remaining sample has size $n-1 = 3m$, and
+$k' = \min(k, n-1) = 2m+1$ for all $m \ge 1$.
+
+At query $a$, the top-$k'$ neighbors consist of the remaining $m$ copies
+of $(a,0)$, all $m$ copies of $(a,1)$, and the first copy of $(b,0)$.
+The margin is
+\[
+M_{k'}(S_m^{-i}, a) = m(-1) + m(+1) + 1(-1) = -1.
+\]
+The prediction is $0$, unchanged from the original. Since the loss at $(a,0)$
+was $0$ before and remains $0$ after deletion, $\Delta_{\mathrm{loo}} = 0$.
+
+\paragraph{LOO at an $(a,1)$ occurrence.}
+Delete the $i$-th copy of $(a,1)$ and evaluate at $(a,1)$. After deletion,
+the top-$k'$ at $a$ consists of all $(m+1)$ copies of $(a,0)$, the remaining
+$(m-1)$ copies of $(a,1)$, and the first copy of $(b,0)$. The margin is
+\[
+M_{k'}(S_m^{-i}, a) = (m+1)(-1) + (m-1)(+1) + 1(-1) = -3.
+\]
+The prediction is $0$. The original prediction at $(a,1)$ was also $0$
+(margin $-1$), so the original loss at $(a,1)$ was $1$; the loss after deletion
+is still $1$. Hence $\Delta_{\mathrm{loo}} = 0$.
+
+\paragraph{LOO at a $(b,0)$ occurrence.}
+Delete the $i$-th copy of $(b,0)$ and evaluate at $(b,0)$. The original margin
+at query $b$ is
+\[
+M_k(S_m, b) = m(-1) + (m+1)(-1) = -(2m+1),
+\]
+so the original prediction is $0$ and the loss at $(b,0)$ is $0$.
+
+After deletion, the top-$k'$ at $b$ consists of $(m-1)$ copies of $(b,0)$,
+all $(m+1)$ copies of $(a,0)$, and the first copy of $(a,1)$. The margin is
+\[
+M_{k'}(S_m^{-i}, b) = (m-1)(-1) + (m+1)(-1) + 1(+1) = -(2m-1).
+\]
+For all $m \ge 0$, this is $\le 0$, so the prediction remains $0$ and the
+loss stays $0$. Thus $\Delta_{\mathrm{loo}} = 0$.
+
+Since every index falls into one of the three cases above, we have
+$\Delta_{\mathrm{loo}}(S_m, i) = 0$ for all $i$.
+
+\paragraph{Replace-one instability.}
+Now replace the first occurrence $(a,0)_1$ with $(a,1)$. The perturbed
+sample is
+\[
+S_m^{1 \leftarrow (a,1)} = \big((a,1),\; (a,0)_2,\ldots,(a,0)_{m+1},\;
+                             (a,1)_1,\ldots,(a,1)_m,\;
+                             (b,0)_1,\ldots,(b,0)_m\big).
+\]
+
+At query $a$, the top-$k$ neighbors are now: $(a,1)$ at index $1$, then
+$(a,0)_2$ through $(a,0)_{m+1}$ ($m$ copies), then $(a,1)_1$ through
+$(a,1)_m$ ($m$ copies). All $k = 2m+1$ neighbors are at distance $0$. The
+signed margin becomes
+\[
+M_k(S_m^{1 \leftarrow (a,1)}, a) = 1(+1) + m(-1) + m(+1) = 1 > 0,
+\]
+so the classifier now predicts $1$ at $a$. The loss at $(a,0)$ changes from
+$0$ to $1$, giving $\Delta_{\mathrm{rep}}(S_m, 1, (a,1), a, 0) = 1$.
+\end{proof}
+
+The construction uses only the fact that $a$ and $b$ are distinct points with
+$d(a,b) > 0$; the separation therefore holds in any metric space with at least
+two points. The ordered occurrence sequence is essential: placing all $(a,0)$
+copies before $(a,1)$ copies ensures the original margin is $-1$. Conflicting
+labels at $a$ are the mechanism by which a single replacement changes the label
+composition of the top-$k$ neighborhood without changing its geometric
+membership.
+
+The $k=1$ case, excluded from \Cref{thm:odd-k-separation}, is already covered
+by the two-point witness of \Cref{sec:finite-separation}. Taken together, the
+LOO/replace-one separation holds for every odd $k$: $k=1$ by the two-point
+witness and $k \ge 3$ by \Cref{thm:odd-k-separation}.
+
+\subsection{Even-$k$ Separation}
+
+For even $k = 2m$ with $m \ge 1$, the same metric space admits a separation
+analogous to the odd case, but with a different margin profile.
+
+Define the ordered sample
+\[
+S_m^{\text{even}} \;=\; \big((a,0)_1,\ldots,(a,0)_m,\;
+                            (a,1)_1,\ldots,(a,1)_m,\;
+                            (b,0)_1,\ldots,(b,0)_m\big),
+\]
+of size $n = 3m$. Fix $k = 2m$ and query-label pair $(a,0)$.
+
+\begin{theorem}[Even-$k$ LOO/replace-one separation]
+\label{thm:even-k-separation}
+For every even $k = 2m$ with $m \ge 1$, the sample $S_m^{\text{even}}$
+satisfies
+\[
+\Delta_{\mathrm{loo}}(S_m^{\text{even}}, i) = 0 \quad \text{for every index } i,
+\]
+while there exists an index $j$ and a replacement point $z$ such that
+\[
+\Delta_{\mathrm{rep}}(S_m^{\text{even}}, j, z, a, 0) = 1.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Original prediction at $(a,0)$.} At query $a$, the top-$k$ neighbors are
+$m$ copies of $(a,0)$ and $m$ copies of $(a,1)$. The signed margin is
+\[
+M_k(S_m^{\text{even}}, a) = m(-1) + m(+1) = 0,
+\]
+and by the deterministic tie-breaking rule ($0 \prec 1$) the prediction is $0$,
+so the loss at $(a,0)$ is $0$.
+
+\textbf{LOO at an $(a,0)$ occurrence.} After deletion, the top-$k'$ at $a$
+consists of $(m-1)$ copies of $(a,0)$, $m$ copies of $(a,1)$, and the first
+copy of $(b,0)$. The margin is
+\[
+M_{k'} = (m-1)(-1) + m(+1) + 1(-1) = 0,
+\]
+the prediction remains $0$ by tie-breaking, and the loss at $(a,0)$ is
+unchanged. Hence $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{LOO at an $(a,1)$ occurrence.} After deletion, the top-$k'$ at $a$
+consists of $m$ copies of $(a,0)$, $(m-1)$ copies of $(a,1)$, and the first
+copy of $(b,0)$. The margin is
+\[
+M_{k'} = m(-1) + (m-1)(+1) + 1(-1) = -2,
+\]
+the prediction is $0$. The original loss at $(a,1)$ was $1$; after deletion the
+loss remains $1$. So $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{LOO at a $(b,0)$ occurrence.} After deletion, the top-$k'$ at $b$
+consists of $(m-1)$ copies of $(b,0)$, $m$ copies of $(a,0)$, and the first
+copy of $(a,1)$. The margin is
+\[
+M_{k'} = (m-1)(-1) + m(-1) + 1(+1) = -(2m-2),
+\]
+which is $\le 0$ for all $m \ge 1$. The loss at $(b,0)$ is unchanged.
+Therefore $\Delta_{\mathrm{loo}} = 0$.
+
+\textbf{Replace-one instability.} Replace the first occurrence $(a,0)_1$ with
+$(a,1)$. The top-$k$ at $a$ now contains one copy of $(a,1)$ at the top,
+$(m-1)$ copies of $(a,0)$, and $m$ copies of $(a,1)$. The margin is
+\[
+M_k = 1(+1) + (m-1)(-1) + m(+1) = 2 > 0,
+\]
+so the prediction flips to $1$. The loss at $(a,0)$ goes from $0$ to $1$,
+giving $\Delta_{\mathrm{rep}} = 1$.
+\end{proof}
+
+\subsection{Structural Differences Between Odd and Even $k$}
+
+The odd and even constructions share the same metric space and the same
+replacement mechanism, but the margin analysis reveals a structural difference.
+
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+
+\item \textbf{Margin at the prediction threshold.}
+For odd $k$, the original margin is $-1$, strictly negative. The prediction
+reflects a genuine (if minimal) majority. For even $k$, the original margin is
+$0$, an exact tie; the prediction is determined solely by the tie-breaking
+convention. In this sense, the even-$k$ separation is weaker: it depends on the
+deterministic tie-breaking rule to stabilize the original prediction against
+LOO perturbations.
+
+\item \textbf{LOO stability margin.}
+For odd $k$, after deleting an $(a,0)$ occurrence, the margin remains $-1$
+(non-zero, no tie). For even $k$, the post-deletion margin becomes $0$
+(a tie), and LOO stability relies on the same tie-breaking rule to keep the
+prediction at $0$. If the tie-breaking rule were randomized, the even-$k$
+prediction after deletion would be $0$ or $1$ with equal probability,
+potentially breaking the LOO stability guarantee.
+
+\item \textbf{Replace-one effect.}
+In both cases, the margin increases by exactly $2$ after the replacement
+(from $-1$ to $+1$ for odd $k$; from $0$ to $+2$ for even $k$). The increment
+of $2$ follows from flipping one label from $0$ to $1$ in the top-$k$: the
+contribution of that occurrence changes from $-1$ to $+1$.
+
+\end{enumerate}
+
+\subsection{Computational Evidence}
+
+The constructions above subsume the computational search evidence for
+$k=3,5,7$ that motivated this investigation. Those candidates were generated
+via bounded enumeration and are now superseded by the uniform combinatorial
+argument that extends the separation to all odd $k \ge 3$.
+
+A summary of the computational candidates is provided in
+\Cref{tab:k-gadget-candidates} in the appendix.

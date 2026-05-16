@@ -1,0 +1,71 @@
+\section{Practical Implications}
+\label{sec:practical-implications}
+
+The theoretical and experimental results of this paper have several practical
+consequences for the use of stability diagnostics in machine learning.
+
+\subsection{Cross-Validation Stability Is Not Adversarial Robustness}
+
+Leave-one-out cross-validation is a standard tool for model assessment. When a
+model has low LOO error variance, practitioners often infer that the model is
+``stable.'' Our results show that this inference is unwarranted: a model can be
+perfectly LOO-stable while simultaneously being highly vulnerable to a single
+adversarially chosen replacement. The LOO/replace-one gap means that
+cross-validation stability certificates do not automatically transfer to
+adversarial replacement scenarios.
+
+This is not a theoretical curiosity. The experimental results of
+\Cref{sec:tabular-benchmark} show that the gap appears on standard UCI datasets
+with measurable frequency. A practitioner evaluating a $k$-NN classifier on the
+Digits dataset with $k=1$ would see zero LOO instability in every replicate, yet
+a single well-chosen replacement flips the prediction in every case.
+
+\subsection{Margin-Based Vulnerability Detection Is Practical}
+
+The StabilityGapDiagnostic algorithm (\Cref{sec:diagnostic-algorithm}) provides
+a computationally efficient way to detect the gap. The margin criterion
+$|M_k(S, x)| \le 2$ requires only the computation of the signed vote margin for
+each query, which is $O(n \log n)$ for a single query and straightforward to
+compute for all queries in a dataset.
+
+The diagnostic outputs:
+\begin{itemize}
+    \item A list of {\em vulnerable queries} where the margin is within the
+        replace-one flip range.
+    \item {\em Margin-crossing certificates} that demonstrate explicit
+        replacement perturbations capable of changing the prediction.
+    \item An overall {\em LOO/replace-one gap score} that quantifies the
+        discrepancy between the two stability notions.
+\end{itemize}
+
+\subsection{Guidelines for Practitioners}
+
+Based on the analysis, we offer the following practical recommendations:
+
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+    \item \textbf{Do not equate LOO stability with replacement robustness.}
+        A low LOO error is not evidence that the model is insensitive to
+        single-point adversarial perturbations. Always check both LOO and
+        replace-one indicators when robustness is a concern.
+    \item \textbf{Monitor the margin distribution.} The signed margin
+        $M_k(S, x)$ is a more informative diagnostic than aggregate loss.
+        Queries with margin $|M_k| \le 2$ are potentially vulnerable to a
+        single replacement.
+    \item \textbf{Avoid small $k$ in high-stakes settings.} The LOO/replace-one
+        gap is most frequent at small $k$ and in high-dimensional spaces where
+        near-distance ties are common. If the environment is adversarial,
+        increasing $k$ reduces the vulnerability.
+    \item \textbf{Use the diagnostic before deployment.} Run
+        \textsc{StabilityGapDiagnostic} on the training set to detect
+        vulnerable queries. If the gap exceeds the application's tolerance,
+        consider switching to a smoother classifier or using an ensemble.
+\end{enumerate}
+
+\subsection{Limitations of the Practical Analysis}
+
+The diagnostic is designed for deterministic $k$-NN on finite metric spaces.
+Extending it to randomized classifiers, real-valued scores, or non-metric
+similarity measures requires additional theoretical development (see
+\Cref{sec:discussion}). The experimental results are also limited to
+relatively small datasets; scaling the diagnostic to large-scale applications
+is left for future work.

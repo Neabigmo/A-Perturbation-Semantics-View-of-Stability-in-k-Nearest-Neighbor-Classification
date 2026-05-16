@@ -1,0 +1,85 @@
+\section{Proof Sketches and Deferred Proofs}
+
+This appendix records proof details for the new results in the paper.
+
+\subsection{Proof of the General Odd-$k$ Separation (Theorem~\ref{thm:odd-k-separation})}
+
+The proof in the main text is self-contained. Here we provide additional
+commentary on the boundary cases.
+
+\paragraph{The case $m = 0$ (k = 1).}
+When $m = 0$, the sample $S_0 = ((a,0), (b,0))$ reduces to the two-point witness
+of \Cref{prop:6.1}.  The margin analysis gives $M_1(S_0,a) = -1$; after LOO at
+index $0$ the margin is $-1$, and after replacement at index $0$ the margin is
+$+1$.  This $k=1$ case is excluded from \Cref{thm:odd-k-separation} (which
+requires $m \ge 1$, i.e., $k \ge 3$) and is handled directly by
+\Cref{prop:6.1}.
+
+\paragraph{The case $m = 1$ (k = 3).}
+The sample is $S_1 = ((a,0), (a,0), (a,1), (b,0))$ of size $n=4$. The
+original margin at $a$ is $-1$. LOO at each index is $0$ by the case analysis
+in the proof. After replacing the first $(a,0)$ by $(a,1)$, the margin becomes
+$+1$. This matches the computational candidate found by the earlier bounded
+search.
+
+\paragraph{General $m \ge 2$.}
+For $m \ge 2$, $n = 3m+1 \ge 7$ and the post-deletion sample size $3m$ is
+always at least $k = 2m+1$, so $k' = k$ throughout. The LOO analysis is
+uniform across all $m$.
+
+\subsection{Proof of the Even-$k$ Separation (Theorem~\ref{thm:even-k-separation})}
+
+The even-$k$ case follows the same structure but with margin $0$ in the
+original configuration. The tie-breaking rule $0 \prec 1$ determines the
+prediction in the pre- and post-deletion configurations. If the tie-breaking
+rule were changed to $1 \prec 0$, the separation would reverse direction.
+
+\subsection{Proof Details for the Stability Hierarchy (Section~\ref{sec:stability-hierarchy})}
+
+\paragraph{Proposition~\ref{prop:del-not-impl-ins}.}
+Take metric space $\{a, b\}$ with $d(a,b) = 1$. Let $S = ((a,0), (b,0))$ and
+fix $k=1$, query $(a,1)$. The original prediction at $a$ is $0$, so the loss at
+$(a,1)$ is $1$. Deleting either index leaves a sample whose $1$-NN prediction
+at $a$ is still $0$: deleting $(a,0)$ makes $(b,0)$ the nearest neighbor;
+deleting $(b,0)$ leaves $(a,0)$ as the sole neighbor. Thus $\Delta_{\mathrm{del}} = 0$ for all $i,x,y$. Inserting $(a,1)$ at position~1 gives
+$((a,1), (a,0), (b,0))$, and the $1$-NN prediction at $a$ becomes $1$, changing
+the loss at $(a,1)$ from $1$ to $0$. Hence $\Delta_{\mathrm{ins}} = 1$.
+
+\paragraph{Proposition~\ref{prop:ins-not-impl-del}.}
+Take $k=2$ with metric space $\{a,b\}$, $d(a,b)=1$. Let $S = ((a,0), (b,1))$
+and fix query $(a,1)$. The original $2$-NN prediction at $a$ is $0$ (margin $0$,
+tie resolved to $0$), so the loss at $(a,1)$ is $1$. Deleting index $0$ leaves
+$((b,1))$; with $k'=\min(2,1)=1$, the $1$-NN prediction at $a$ is $1$, changing
+the loss to $0$. Hence $\Delta_{\mathrm{del}} = 1$ at $(i=0,x=a,y=1)$. For any
+insertion at any position, the $2$-NN at $a$ always includes an $(a,0)$ before
+any inserted point at distance $0$, so the margin stays at $0$ and the prediction
+remains $0$ by tie-breaking. Thus $\Delta_{\mathrm{ins}} = 0$ for all insertions.
+
+\paragraph{Proposition~\ref{prop:loo-not-impl-del}.}
+Let the metric space be the three-point linear metric $\{0,1,2\}$ with
+$d(0,1)=d(1,2)=1$, $d(0,2)=2$. Fix $k=1$ and
+$S = ((0,0), (2,1), (0,0), (2,1))$. Every point appears with a same-label
+duplicate, so LOO at each index is $0$. Now consider delete-one at index~0 with
+query $(1,0)$. The original $1$-NN at $1$ is a tie between $(0,0)$ (index~0) and
+$(2,1)$ (index~1), resolved to $(0,0)$, predicting $0$; loss at $(1,0)$ is $0$.
+After deleting index~0, the $1$-NN at $1$ is again a tie between $(2,1)$
+(index~0) and $(0,0)$ (index~1), now resolved to $(2,1)$, predicting $1$. The
+loss at $(1,0)$ becomes $1$, giving $\Delta_{\mathrm{del}}(S,0,1,0)=1$.
+
+\subsection{Margin Certificate Proofs}
+
+\paragraph{Proof of Proposition~\ref{prop:margin-certificate}.}
+Let $x'$ be any replacement point with $d(x, x') > \rho$. By Definition
+\ref{def:perturbation-radius}, such a replacement cannot change the
+neighborhood $N(S,x)$. Therefore the signed margin can only change through
+the label contribution of the replaced occurrence. If that occurrence is in
+$N(S,x)$, its weight is bounded by $w_{\max}$, so the margin changes by at
+most $2 w_{\max}$. If $|M - \tau| > 2 w_{\max}$, the margin cannot cross the
+threshold $\tau$.
+
+\paragraph{Proof of Proposition~\ref{prop:vulnerability}.}
+Replacing occurrence $i$ by $(x',y')$ changes the margin by
+$\Delta M = w(x,x')(2y'-1) - w(x,x_i)(2y_i-1)$. The worst-case change (in
+absolute value) is at least $w(x,x_i) \cdot |(2y_i-1) - (2y'-1)|$ when
+$w(x,x') \ge w(x,x_i)$. If this change suffices to push $M$ across $\tau$,
+the prediction flips.

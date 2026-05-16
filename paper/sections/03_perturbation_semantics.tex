@@ -1,0 +1,146 @@
+\section{Perturbation Semantics}
+\label{sec:perturbation-semantics}
+
+Stability is not defined until both the perturbation operation and the
+evaluation point are specified.  This section fixes the notation and
+distinguishes four perturbation notions that are often conflated.
+
+\subsection{Ordered finite samples and deterministic $k$-NN}
+
+\begin{definition}[Sample]
+A \emph{sample} $S$ of size $n$ is an ordered tuple
+\[
+S = \big((x_1, y_1), \ldots, (x_n, y_n)\big)
+\]
+where each $x_i \in X$ lies in a finite metric space $(X, d)$ and each label
+$y_i \in \{0, 1\}$.
+\end{definition}
+
+The order of the tuple is semantically relevant only for deterministic
+tie-breaking.  Two identical labeled points appearing at different indices are
+treated as distinct sample occurrences.
+
+\begin{note}[Duplicate points and conflicting labels]
+Duplicate points are allowed.  Conflicting labels at the same point are
+allowed.  Any theorem or experiment that excludes duplicates or conflicts must
+state this explicitly.
+\end{note}
+
+These conventions are not cosmetic: duplicates, conflicting labels, and
+deterministic ordering are precisely where local perturbation sensitivity can
+appear.  Several examples collapse or become ambiguous if these conventions are
+left implicit.
+
+\begin{definition}[Finite Metric Space]
+A finite metric space is a finite set $X$ together with a distance function
+\[
+d : X \times X \to \mathbb{R}_{\ge 0}
+\]
+satisfying for all $x, x', z \in X$: $d(x, x) = 0$; $d(x, x') > 0$ for
+$x \ne x'$; $d(x, x') = d(x', x)$; and the triangle inequality.
+\end{definition}
+
+\begin{definition}[Graph Shortest-Path Metric]
+For a finite, simple, connected, undirected graph $G = (V, E)$, the graph
+metric is $d_G(u, v) = \text{length of a shortest path from } u \text{ to } v$.
+\end{definition}
+
+\begin{definition}[Deterministic Tie-Breaking]
+Neighbor ordering is determined lexicographically by: (1) smaller distance to
+the query point; (2) smaller sample index in the ordered tuple.  If class votes
+tie after the first $k$ ordered neighbors are selected, the predicted label is
+resolved by fixed label order $0 \prec 1$.
+\end{definition}
+
+\begin{definition}[$k$-NN Prediction]
+\label{def:knn-prediction}
+Given $k \in \mathbb{N}$ with $1 \le k \le n$, the deterministic $k$-NN
+predictor $h_S^{(k)}(x)$ is obtained by: ordering the sample occurrences by the
+deterministic neighbor rule above; selecting the first $k$ occurrences; taking
+the majority vote of their labels; resolving label-vote ties by $0 \prec 1$.
+\end{definition}
+
+\begin{definition}[Binary 0-1 Loss]
+For a hypothesis $h$ and a labeled point $(x, y)$, the binary classification
+loss is $\ell(h, (x, y)) = \mathbf{1}\{h(x) \ne y\}$.
+\end{definition}
+
+\subsection{Delete-one, insert-one, replace-one}
+
+Let $S = \big((x_1, y_1), \ldots, (x_n, y_n)\big)$.
+
+\begin{definition}[Delete-One]
+For index $i \in \{1,\ldots,n\}$, define $S^{-i}$ as the ordered tuple with the
+$i$-th occurrence removed.
+\end{definition}
+
+\begin{definition}[Insert-One]
+For any labeled point $z = (x, y) \in X \times \{0,1\}$ and any insertion
+position $j \in \{1,\ldots,n+1\}$, define $S \oplus_j z$ as the ordered tuple
+obtained by inserting $z$ at position $j$.
+\end{definition}
+
+\begin{definition}[Replace-One]
+For index $i$ and labeled point $z = (x', y') \in X \times \{0,1\}$, define
+$S^{i \leftarrow z}$ as the ordered tuple obtained by replacing the $i$-th
+occurrence of $S$ with $z$.
+\end{definition}
+
+\subsection{Why LOO is not delete-one}
+
+\begin{definition}[LOO / CVloo Stability]
+For each index $i$, define
+\[
+\Delta_{\mathrm{loo}}(S, i)
+=
+\left| \ell(h_{S^{-i}}^{(k')}, (x_i, y_i)) - \ell(h_S^{(k)}, (x_i, y_i)) \right|,
+\]
+where $k' = \min(k, n-1)$ when deletion reduces sample size below $k$.
+\end{definition}
+
+LOO is not simply delete-one.  It is delete-one with the evaluation point
+constrained to be the deleted occurrence.  This coupling between perturbation
+and evaluation point is the defining property that distinguishes LOO from
+replacement-based stability notions.
+
+The following table makes the distinctions explicit.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}lXXl@{}}
+\toprule
+Notion & Perturbation & Evaluation point & Tests what \\
+\midrule
+Delete-one & Remove one occurrence & Arbitrary query & Deletion sensitivity \\
+Insert-one & Add one occurrence & Arbitrary query & Insertion sensitivity \\
+Replace-one & Swap one occurrence & Arbitrary query & Replacement robustness \\
+LOO & Delete one occurrence & Deleted occurrence & CV sensitivity \\
+\bottomrule
+\end{tabularx}
+\caption{Four perturbation notions distinguished by what is perturbed and where
+the perturbed predictor is evaluated.  The comparison shows that LOO is a
+special case of delete-one with a restricted evaluation point.}
+\label{tab:perturbation-semantics}
+\end{table}
+
+The pointwise stability indicators used throughout the paper are:
+
+\begin{align*}
+\Delta_{\mathrm{del}}(S, i, x, y) &=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S^{-i}}^{(k')}, (x, y)) \right|,
+\\
+\Delta_{\mathrm{rep}}(S, i, z, x, y) &=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S^{i \leftarrow z}}^{(k)}, (x, y)) \right|,
+\\
+\Delta_{\mathrm{ins}}(S, j, z, x, y) &=
+\left| \ell(h_S^{(k)}, (x, y)) - \ell(h_{S \oplus_j z}^{(k)}, (x, y)) \right|,
+\\
+\Delta_{\mathrm{loo}}(S, i) &=
+\left| \ell(h_{S^{-i}}^{(k')}, (x_i, y_i)) - \ell(h_S^{(k)}, (x_i, y_i)) \right|.
+\end{align*}
+
+For LOO, the evaluation pair $(x_i, y_i)$ is fixed to the deleted occurrence,
+so it is not a free parameter.  This is the critical difference: replace-one
+and delete-one can be evaluated at any query, while LOO can only testify about
+the deleted point itself.

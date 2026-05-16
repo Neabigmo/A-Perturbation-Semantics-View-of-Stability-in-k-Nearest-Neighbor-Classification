@@ -1,9 +1,0 @@
-{
-  "task_id": "TASK-005",
-  "model": "opus",
-  "exit_code": 1,
-  "elapsed_seconds": 434.065,
-  "report_path": "tasks\\reports\\TASK-005.report.json",
-  "status": "failed",
-  "stderr": ""
-}

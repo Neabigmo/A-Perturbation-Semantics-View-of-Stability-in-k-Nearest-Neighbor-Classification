@@ -1,0 +1,54 @@
+\section{The Minimal $1$-NN Separation}
+\label{sec:minimal-1nn}
+
+This section answers: how small can the LOO/replace-one separation be?  The
+answer: two points suffice.
+
+\subsection{Two-point construction}
+
+Let the metric space contain two vertices $a,b$ joined by one edge, so
+$d(a,b)=1$.  Consider the ordered sample
+\[
+S = \big((a,0),\;(b,0)\big).
+\]
+
+\subsection{LOO stability}
+
+Delete the first occurrence $(a,0)$.  The remaining sample is $((b,0))$, whose
+$1$-NN prediction at the deleted occurrence's location $a$ is still $0$ because
+the sole remaining neighbor has label $0$.  Hence the loss at $(a,0)$ is
+unchanged: $\Delta_{\mathrm{loo}}(S,1)=0$.
+
+Delete the second occurrence $(b,0)$.  The remaining sample is $((a,0))$, whose
+$1$-NN prediction at $b$ is $0$, unchanged.  Hence
+$\Delta_{\mathrm{loo}}(S,2)=0$.
+
+Thus $\Delta_{\mathrm{loo}}(S,i)=0$ for every sample index $i$.
+
+\subsection{Replace-one instability}
+
+Now evaluate at the fixed query-label pair $(x,y)=(a,0)$.  Replace the first
+occurrence $(a,0)$ by $(a,1)$, obtaining
+\[
+S^{1 \leftarrow (a,1)} = \big((a,1),\;(b,0)\big).
+\]
+
+At query $a$, the original sample predicts $0$ because $(a,0)$ is the unique
+nearest occurrence.  In the perturbed sample, the unique nearest occurrence is
+now $(a,1)$, so the prediction becomes $1$.  Hence
+\[
+\Delta_{\mathrm{rep}}(S, 1, (a,1), a, 0) = 1.
+\]
+
+\subsection{Moral}
+
+The separation does not require large samples, high dimension, or probabilistic
+effects.  It appears already in a two-point finite metric space.  The
+mechanism is minimal: a single replacement flips the label of the decisive
+nearest neighbor, while each LOO deletion removes a point whose label was
+already consistent with the remaining nearest neighbor.
+
+This two-point example sets the pattern for the general constructions that
+follow.  For larger $k$, the same principle (stabilize the margin on one side
+for LOO, cross it via a targeted replacement) is amplified through duplicate
+occurrence patterns.

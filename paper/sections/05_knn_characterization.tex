@@ -19,7 +19,7 @@ Under the label-order tie-break $0 \prec 1$, the deterministic classifier
 predicts label $1$ exactly when $M_k(S,x)>0$.
 
 \begin{proposition}[Margin crossing criterion]
-\label{prop:margin-crossing}
+\label{prop:5.1}
 Fix $S$, $k$, and a query $x$. Let $S'$ be any perturbed sample of the same
 ambient metric space, interpreted with the same deterministic tie-breaking rule.
 Then
@@ -40,13 +40,13 @@ strictly positive signed margin and $0$ otherwise. Therefore the prediction
 changes precisely when one margin is positive and the other is non-positive.
 \end{proof}
 
-\Cref{prop:margin-crossing} is elementary but useful: every perturbation
+\cref{prop:5.1} is elementary but useful: every perturbation
 argument can be reduced to tracking how the ordered top-$k$ membership changes
 and how the corresponding signed vote changes.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/knn_topk_boundary.pdf}
+    \includegraphics[width=0.82\linewidth]{outputs/figures/recreated_fig04.png}
     \caption{Ordered top-$k$ membership determines the relevant local state for
     deterministic $k$-NN. Instability is possible only when a perturbation
     changes this neighborhood or flips the labels of occurrences already inside
@@ -56,57 +56,32 @@ and how the corresponding signed vote changes.
 
 Two immediate consequences are worth isolating. First, deleting an occurrence
 outside $N_k(S,x)$ cannot change the prediction at $x$ unless the deletion also
-shifts the boundary and pulls a new occurrence into the top-$k$ set. Second, a
+shifts the boundary and pulls a new occurrence into the top-$k$ set
+(\cref{fig:stable-deletion}, \Cref{app:additional-figures}). Second, a
 replace-one perturbation can act in two different ways: it can change the
 geometry of who enters the neighborhood, or it can leave the geometry fixed and
 still flip the vote by changing the label attached to a strategically placed
-occurrence.
+occurrence (\cref{fig:replace-flip}, \Cref{app:additional-figures}).
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/knn_topk_stable_deletion.pdf}
-    \caption{Deletion outside the ordered top-$k$ neighborhood is inert unless
-    it changes the boundary and promotes a new occurrence into the vote.}
-    \label{fig:stable-deletion}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/knn_topk_margin_flip.pdf}
+    \includegraphics[width=0.82\linewidth]{outputs/figures/recreated_fig06.png}
     \caption{A local perturbation changes the prediction only when the top-$k$
     signed vote crosses zero. This is the exact mechanism behind all explicit
-    witnesses in the draft.}
+    witnesses in this paper.}
     \label{fig:margin-flip}
 \end{figure}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/knn_replace_one_insertion_flip.pdf}
-    \caption{Replace-one perturbations can flip the decision either by moving a
-    new occurrence into the decisive neighborhood or by changing the label
-    composition of a neighborhood that was already geometrically close to the
-    boundary.}
-    \label{fig:replace-flip}
-\end{figure}
-
-These mechanisms become especially sensitive in the presence of duplicate
+These mechanisms are especially sensitive in the presence of duplicate
 occurrences and equal-distance contenders, because the top-$k$ neighborhood is
 then controlled by the deterministic tie-breaking convention rather than by
-distance alone. That is not a nuisance artifact. It is part of the object being
-studied.
+distance alone (\cref{fig:tie-microscope}, \Cref{app:additional-figures}).
+This is by design: tie-breaking is part of the object being
+studied, not a nuisance to be eliminated.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.82\linewidth]{outputs/figures/tie_breaking_microscope.pdf}
-    \caption{Tie-breaking is not decorative. When several occurrences are at
-    equal distance, the deterministic sample order and fixed label order can
-    determine whether a perturbation is visible to the predictor.}
-    \label{fig:tie-microscope}
-\end{figure}
-
-The rest of the paper repeatedly uses this margin-crossing microscope. In the
-$1$-NN witness of \Cref{sec:finite-separation}, the decisive effect is a single
-nearest-occurrence replacement. In the odd-$k$ gadget search of
-\Cref{sec:k-extension}, the search heuristics attempt to engineer repeated
+The rest of the paper uses this margin-based analysis repeatedly. In
+the $1$-NN witness of \Cref{sec:finite-separation}, the decisive effect is a
+single nearest-occurrence replacement. In the odd-$k$ separation theorem of
+\Cref{sec:k-extension}, the construction produces repeated
 occurrence patterns whose signed margin is stable under LOO but fragile under a
 targeted replace-one move.

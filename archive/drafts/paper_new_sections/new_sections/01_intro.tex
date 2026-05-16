@@ -1,0 +1,114 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Leave-one-out cross-validation is a standard tool for assessing
+classifier performance, and a low LOO error is often read as evidence that the
+classifier is not overly sensitive to any single training point. This
+inference conflates two distinct objects: the effect of deleting a point and
+then evaluating at that same point (LOO), versus the effect of replacing a
+point with an adversarially chosen labeled example (replace-one) and
+evaluating at an independent query. For local learning rules such as
+deterministic $k$-nearest neighbors, these two operations can give
+diametrically opposite answers about the stability of a prediction.
+
+This paper is about making that distinction mathematically precise and
+showing that it matters for both theory and practice. Our setting is
+deterministic $k$-NN on finite metric spaces with ordered samples, duplicate
+occurrences, conflicting labels, and deterministic tie-breaking. Within this
+setting, we develop a perturbation calculus at two levels --- a uniform
+(worst-case) level that relates perturbation operations algebraically, and a
+pointwise (fixed-sample) level that uncovers sharp separations between
+notions that are often conflated.
+
+\paragraph{Perturbation operations.}
+Let $S$ be an ordered sample of labeled points. The three basic operations
+are: delete an occurrence (delete-one), insert a new labeled point
+(insert-one), and replace an occurrence by another labeled point
+(replace-one). Leave-one-out (LOO) is not a separate operation: it is
+delete-one evaluated at the deleted occurrence. This coupling between
+perturbation and evaluation point is the defining property that distinguishes
+LOO from replacement-based stability notions.
+
+\paragraph{Uniform calculus.}
+At the uniform (worst-case) level, the relationship between operations is
+clean. A replace-one perturbation factorizes into a delete-one followed by
+an insert-one at the same position. By the triangle inequality on losses,
+replace-one stability is bounded by the sum of delete-one and insert-one
+stability (Proposition~\ref{prop:4.1}). This bound is algebraically sharp:
+neither delete-one nor insert-one alone suffices to control replacement
+perturbations, as the separation theorems demonstrate.
+
+\paragraph{Margin-crossing mechanism.}
+For deterministic $k$-NN, the prediction changes if and only if the signed
+vote margin inside the ordered top-$k$ neighborhood crosses zero
+(Proposition~\ref{prop:5.1}). This margin criterion is the unifying mechanism
+behind all perturbation analysis: every stability question reduces to tracking
+how the margin changes under an operation.
+
+\paragraph{LOO/replace-one separations.}
+The margin criterion reveals that LOO stability and replace-one stability can
+diverge sharply. We construct, for every odd $k \ge 3$ (and for even $k$
+under deterministic tie-breaking), an explicit finite metric sample in which
+all LOO indicators vanish while a single targeted replace-one perturbation
+flips the prediction at a designated query (Theorems~\ref{thm:odd-k-separation},
+\ref{thm:even-k-separation}). The mechanism is the same in all cases: the
+margin at the LOO evaluation point is stabilized by duplicate occurrences,
+while a strategically placed label-flip at a different occurrence crosses the
+margin threshold.
+
+\paragraph{Experimental evidence.}
+These separations are not confined to hand-crafted witnesses. In random graph
+benchmarks and UCI tabular datasets, the LOO/replace-one gap appears at
+measurable frequency, especially for small $k$, high duplicate ratios, and
+label noise. We provide a margin-based diagnostic algorithm that detects
+vulnerable queries without enumerating all possible replacements.
+
+\subsection*{Contributions}
+
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+    \item \textbf{Perturbation calculus.} We formalize delete-one, insert-one,
+        replace-one, and LOO stability for deterministic $k$-NN with explicit
+        conventions for ordered samples, duplicates, conflicting labels, and
+        tie-breaking (\Cref{sec:definitions}). At the uniform level,
+        replace-one stability is bounded by the sum of delete-one and
+        insert-one stability (\Cref{sec:uniform-calculus}).
+    \item \textbf{Margin-crossing criterion.} We derive an exact signed-margin
+        criterion for when a deterministic $k$-NN prediction changes after any
+        perturbation (\Cref{sec:knn-criterion}).
+    \item \textbf{LOO/replace-one separations.} We construct, for every odd
+        $k \ge 3$ (and even $k$ under deterministic tie-breaking), explicit
+        finite metric samples in which all LOO indicators vanish while a
+        targeted replace-one perturbation flips the prediction
+        (\Cref{thm:odd-k-separation}, \Cref{thm:even-k-separation}).
+    \item \textbf{Diagnostic and experiments.} We develop a margin-based
+        diagnostic that detects vulnerable queries, and demonstrate that the
+        LOO/replace-one gap occurs at measurable frequency in synthetic
+        benchmarks and UCI datasets (\Cref{sec:experiments}).
+\end{enumerate}
+
+\subsection*{Relation to Prior Work}
+
+Classical algorithmic stability \cite{bousquet2002stability,kutin2002almost}
+studies how replacing one training example affects expected or fresh-test
+loss, primarily for generalization control. The present work is orthogonal:
+our goal is not a new generalization bound but a precise understanding of how
+perturbation operations differ at the level of individual finite samples. The
+deleted-estimate literature for nearest-neighbor rules
+\cite{rogers1978finite,devroye1979distribution} and recent conformal
+prediction stability analyses \cite{liang2023algorithmic,pournaderi2024training}
+touch on similar distinctions but do not isolate the LOO/replace-one
+separation we exhibit.
+
+\subsection*{Organization}
+
+\Cref{sec:definitions} fixes the notation and stability notions.
+\Cref{sec:uniform-calculus} proves the uniform perturbation decomposition.
+\Cref{sec:knn-criterion} gives the signed-margin criterion.
+\Cref{sec:finite-separation} states the $1$-NN witness.
+\Cref{sec:odd-k-separation} proves the general odd-$k$ separation theorem.
+\Cref{sec:even-k-analysis} treats the even-$k$ case.
+\Cref{sec:stability-hierarchy} maps the hierarchy of stability relationships.
+\Cref{sec:experiments} reports experimental results and the diagnostic
+algorithm. \Cref{sec:local-vote-framework} discusses extensions to broader
+local vote rules. \Cref{sec:discussion} discusses limitations and open
+problems.

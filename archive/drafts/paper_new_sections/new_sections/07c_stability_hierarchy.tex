@@ -1,0 +1,155 @@
+\section{Complete Stability Hierarchy}
+\label{sec:stability-hierarchy}
+
+The stability notions introduced in \Cref{sec:definitions} and the separation
+results developed above form part of a larger hierarchy of perturbation-stability
+relationships. This section provides a systematic map, marking each
+relationship as a theorem, a counterexample, or an open question.
+
+\subsection{Hierarchy Table}
+
+\input{outputs/tables/stability_hierarchy.tex}
+
+\begin{proposition}[Pointwise delete-one and insert-one are incomparable]
+\label{prop:del-not-impl-ins}
+\label{prop:ins-not-impl-del}
+At the pointwise level, delete-one stability does not imply insert-one
+stability, and vice versa. Explicit counterexamples are given in the
+appendix (\Cref{sec:proof-appendix}). Whether the same separation holds at
+the uniform (worst-case) level remains an open problem.
+\end{proposition}
+
+\subsection{Key Relationships}
+
+We highlight four essential relationships from the table.
+
+\subsubsection{Uniform delete+insert $\Rightarrow$ uniform replace-one}
+
+This is \Cref{prop:4.1}: the triangle inequality on losses gives
+$\beta_{\mathrm{rep}}(n) \le \beta_{\mathrm{del}}(n) + \beta_{\mathrm{ins}}(n-1)$.
+The converse does not follow from this bound and remains open at the uniform
+level. At the pointwise level, the separation theorems below show that
+replace-one stability can fail even when delete-one and insert-one are
+individually stable, confirming that the decomposition is algebraically sharp.
+
+\subsubsection{Pointwise LOO vs.\ pointwise replace-one}
+
+This is the central separation of the paper. By \Cref{thm:odd-k-separation}
+and \Cref{thm:even-k-separation}, pointwise LOO stability does not imply
+pointwise replace-one stability, for both odd and even $k$. The converse
+(pointwise replace-one $\Rightarrow$ pointwise LOO) is trivially false,
+because replace-one stability is defined for a fixed query-label pair, while
+LOO evaluates at the deleted occurrence itself.
+
+A more abstract way to see the structural difference is the following.
+
+\begin{proposition}[LOO only probes training-location-coupled perturbations]
+\label{prop:loo-coupling}
+For any deterministic learning rule, the LOO indicator
+$\Delta_{\mathrm{loo}}(S,i)$ evaluates the loss at the deleted occurrence
+$(x_i, y_i)$ itself. In contrast, the replace-one indicator
+$\Delta_{\mathrm{rep}}(S,i,z,x,y)$ can evaluate any query-label pair
+$(x,y)$, including those far from any training occurrence. Consequently, LOO
+stability can be perfect ($\Delta_{\mathrm{loo}}(S,i)=0$ for all $i$) even
+when there exist pairs $(x,y)$ at which a single replacement changes the
+prediction, because LOO never tests those pairs.
+\end{proposition}
+
+This coupling between perturbation and evaluation point is not an incidental
+feature of LOO; it is the defining property that distinguishes cross-validation
+stability from adversarial replacement robustness.
+
+\subsubsection{Pointwise delete-one (all queries) vs.\ pointwise LOO}
+
+Pointwise delete-one is stronger than LOO: it requires stability at all
+queries $(x,y)$, not just at the deleted occurrence. Therefore pointwise
+delete-one stability implies LOO stability. The converse is false.
+
+\begin{proposition}[LOO does not imply pointwise delete-one]
+\label{prop:loo-not-impl-del}
+There exists an ordered sample $S$ such that
+$\Delta_{\mathrm{loo}}(S,i) = 0$ for all $i$ while
+$\Delta_{\mathrm{del}}(S,i,x,y) = 1$ for some $i,x,y$ with
+$(x,y) \neq (x_i,y_i)$.
+\end{proposition}
+
+\begin{proof}
+Let the metric space be the three-point linear metric $\{0,1,2\}$ with
+$d(0,1)=d(1,2)=1$ and $d(0,2)=2$. Fix $k=1$ and the sample
+$S = ((0,0), (2,1), (0,0), (2,1))$. Every point appears with a same-label
+duplicate, so for each index $i$, the $1$-NN prediction at the deleted
+occurrence is unchanged after deletion: the duplicate ensures the prediction
+remains the same. Hence $\Delta_{\mathrm{loo}}(S,i)=0$ for all $i$.
+
+Now consider delete-one at index $0$ (the first $(0,0)$) with the query
+$(1,0)$. The original $1$-NN at $1$ is a tie between $(0,0)$ (index $0$,
+distance $1$) and $(2,1)$ (index $1$, distance $1$), resolved by sample-order
+tie-breaking to $(0,0)$, predicting $0$; the loss at $(1,0)$ is $0$. After
+deleting index $0$, the remaining sample is $((2,1), (0,0), (2,1))$, and the
+$1$-NN at $1$ is again a tie between $(2,1)$ (index $0$, distance $1$) and
+$(0,0)$ (index $1$, distance $1$), now resolved to $(2,1)$, predicting $1$.
+Thus the loss at $(1,0)$ becomes $1$, giving
+$\Delta_{\mathrm{del}}(S,0,1,0)=1$.
+\end{proof}
+
+\subsubsection{Deterministic tie-breaking vs.\ randomized tie-breaking}
+
+Our tie-breaking convention ($0 \prec 1$) affects the stability landscape,
+particularly for even $k$.
+
+\begin{proposition}[Deterministic tie-breaking can mask instability]
+\label{prop:tie-mask}
+There exists a sample $S$ and even $k$ such that all LOO and delete-one
+indicators vanish under deterministic tie-breaking ($0 \prec 1$), but a
+randomized tie-breaking rule would reveal instability with positive
+probability.
+\end{proposition}
+
+\begin{proof}
+Take the even-$k$ sample from \Cref{thm:even-k-separation} with $k=2$:
+$S = ((a,0), (a,1), (b,0))$. Under deterministic tie-breaking, the prediction
+at $a$ is $0$ (tie goes to $0$) both before and after deleting $(a,0)$, so
+the LOO indicator is $0$.
+
+Under randomized tie-breaking, define the expected LOO indicator as
+$\mathbb{E}[\Delta_{\mathrm{loo}}(S,i)]$ where the expectation is over
+independent random tie-breaking coins. When the margin is $0$ (exact tie),
+the prediction is $0$ or $1$ with equal probability $1/2$. The original
+prediction at $a$ (margin $0$) is therefore $0$ or $1$ with probability
+$1/2$ each. After deleting $(a,0)$, the margin is again $0$, and the
+post-deletion prediction is independent $0$ or $1$ with probability $1/2$
+each. The expected loss difference is
+$\mathbb{E}[|\ell_{\text{orig}} - \ell_{\text{post}}|] = 1/2 \neq 0$, so the
+expected LOO indicator is non-zero under independent randomized tie-breaking.
+\end{proof}
+
+This shows that deterministic tie-breaking can hide instabilities that would
+be visible under randomization. The odd-$k$ separation
+(\Cref{thm:odd-k-separation}) does {\em not} rely on this masking effect,
+since the margins are strictly non-zero throughout.
+
+\subsection{Summary Diagram}
+
+The hierarchy can be summarized by the following diagram (solid arrows indicate
+established implications; dashed arrows indicate open relationships):
+
+\[
+\begin{array}{c}
+\text{Uniform delete+insert} \\
+\downarrow \\
+\text{Uniform replace-one} \\
+\downarrow \\
+\text{Pointwise delete-one (all queries)} \\
+\downarrow \\
+\text{Pointwise LOO} \qquad \text{Pointwise replace-one (fixed query)} \\
+\searrow \qquad \swarrow \\
+\text{[Separated: \Cref{thm:odd-k-separation}, \Cref{thm:even-k-separation}]}
+\end{array}
+\]
+
+The key negative result -- the separation between LOO and replace-one -- is
+the main message of this paper. Further relationships (uniform delete-one vs.\
+insert-one, expected vs.\ worst-case, fresh-test vs.\ fixed-query) are
+recorded in the table above; some remain open at the uniform level.
+
+\input{outputs/tables/hierarchy_summary.tex}

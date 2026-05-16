@@ -1,8 +1,0 @@
-{
-  "task_id": "TASK-020",
-  "executor": "Codex local implementation",
-  "status": "completed",
-  "validation": {
-    "readme_commands_checked": true
-  }
-}

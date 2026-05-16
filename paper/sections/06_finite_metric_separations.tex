@@ -1,11 +1,17 @@
-\section[Finite Metric Separation for 1-NN]{Finite Metric Separation for $1$-NN}
+\section[A Two-Point Separation Between LOO and Replace-One Stability]{A Two-Point Separation Between LOO and Replace-One Stability}
 \label{sec:finite-separation}
 
-We now come to the main theorem-level witness of the draft. The statement is
+We now come to the main explicit witness. The statement is
 small, explicit, and completely deterministic.
 
-\begin{proposition}[Pointwise LOO does not control pointwise replace-one for deterministic $1$-NN]
-\label{prop:two-point-separation}
+\begin{note}[Remark on the example]
+The example uses no distance tie at the decisive replace-one query; the
+separation is therefore not merely an artifact of nearest-neighbor
+tie-breaking.
+\end{note}
+
+\begin{proposition}[Two-point $1$-NN separation]
+\label{prop:6.1}
 There exists a finite graph metric space, an ordered labeled sample $S$, and a
 query-label pair $(x,y)$ such that
 \[
@@ -17,14 +23,14 @@ while for some index $j$ and some admissible replacement point $z$,
 \]
 \end{proposition}
 
-\begin{proof}
+\begin{note}[Proof sketch]
 Let the metric space contain two vertices $a,b$ joined by one edge, so
 $d(a,b)=1$. Consider the ordered sample
 \[
 S=((a,0),(b,0)).
 \]
 Use deterministic $1$-NN with the fixed tie-breaking conventions from
-\Cref{sec:definitions}.
+\cref{sec:definitions}.
 
 For LOO, delete the first occurrence. The remaining sample is $((b,0))$, whose
 $1$-NN prediction at the deleted occurrence's location $a$ is still $0$ because
@@ -41,26 +47,21 @@ At query $a$, the original sample predicts $0$ because $(a,0)$ is the unique
 nearest occurrence. In the perturbed sample, the unique nearest occurrence is
 now $(a,1)$, so the prediction becomes $1$. Hence
 $\Delta_{\rep}(S,1,(a,1),a,0)=1$.
-\end{proof}
+\end{note}
 
-\Cref{fig:minimal-witness} gives the same witness visually. What matters is not
-that the example is exotic, but that it is minimal enough to inspect
-line-by-line. The phenomenon already appears before any asymptotics, averages,
-or large combinatorial constructions enter the story.
+\Cref{prop:6.1} gives the witness in explicit form. The example is not exotic;
+it is simple enough to inspect line-by-line. The phenomenon already appears
+before any asymptotics, averages, or large combinatorial constructions enter.
 
-\input{outputs/tables/minimal_witnesses.tex}
+%% Minimality certificate tables moved to supplementary material.
+The supplementary material contains a finite-search pipeline that looks for
+smaller or structurally simpler witnesses under various restrictions. The
+witness in \cref{prop:6.1} is theorem-level because it is explicit and
+hand-checkable. Claims that no witness exists below a certain search frontier
+are \emph{not} theorem-level; they are computational certificates tied to the
+enumerated search space.
 
-The repository also contains a finite-search pipeline that looks for smaller or
-structurally simpler witnesses under various restrictions. The current output is
-best interpreted as follows. The witness in \Cref{prop:two-point-separation} is
-theorem-level because it is explicit and hand-checkable. Claims that no witness
-exists below a certain search frontier are \emph{not} theorem-level; they are
-computational certificates tied to the enumerated search space.
-
-\input{outputs/tables/certificate_summary.tex}
-
-This distinction matters. A paper can responsibly say ``here is a minimal
-explicit witness we know'' and separately say ``here is a reproducible finite
+This distinction is worth making explicit. A paper can responsibly say ``here is an explicit
+witness we know'' and separately say ``here is a reproducible finite
 certificate supporting minimality within the searched regime.'' It should not
-blur those two statements together. That boundary is part of the contribution,
-not an embarrassment to hide.
+blur those two statements together.

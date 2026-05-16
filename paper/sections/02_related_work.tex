@@ -1,32 +1,25 @@
 \section{Related Work}
 \label{sec:related-work}
 
-Classical algorithmic stability studies how a learning rule changes when the
-training sample is perturbed, primarily in order to control generalization under
-an i.i.d.\ sampling model.  The canonical reference is Bousquet and Elisseeff,
-who formalize several stability notions around replace-one perturbations and
-fresh-test evaluation points \cite{bousquet2002stability}.  Kutin and Niyogi
-expand this landscape with weaker and almost-everywhere variants
-\cite{kutin2002almost}, while Feldman and Vondr\'ak and later Bousquet,
-Klochkov, and Zhivotovskiy sharpen high-probability and rate-sensitive uniform
-stability bounds \cite{feldman2019high,bousquet2020sharpening}.  Our paper does
-not compete with this line on sharper generalization bounds.  Instead, we use
-it as the baseline vocabulary against which a more microscopic perturbation
-calculus can be compared.
-
 \subsection{Algorithmic stability and generalization}
 
-Most modern stability results are phrased around replacing one training example
-and then evaluating expected or fresh-test loss
-\cite{bousquet2002stability,kutin2002almost,mukherjee2006learning}.  This
-perspective is powerful for generalization theory, but it can obscure a simpler
-definition-level point relevant for local rules: ``change one sample point'' is
-not a unique operation.  Delete-one, add-one, replace-one, and leave-one-out
-share a family resemblance, yet they differ both in how the sample changes and
-in where the learner is evaluated afterward.  Our contribution in this section
-is therefore not a new stability hierarchy in the sense of
-\cite{bousquet2002stability}, but a deterministic finite-sample reframing that
-makes the perturbation operation and the evaluation point explicit.
+Classical algorithmic stability studies how a learning rule changes when the
+training sample is perturbed, primarily to control generalization error under
+an i.i.d.\ sampling model.  The canonical reference is Bousquet and Elisseeff,
+who formalize stability notions around replace-one perturbations and fresh-test
+evaluation points \cite{bousquet2002stability}.  Kutin and Niyogi expand this
+landscape with weaker and almost-everywhere variants
+\cite{kutin2002almost}, while Feldman and Vondr\'ak and later Bousquet,
+Klochkov, and Zhivotovskiy sharpen high-probability and rate-sensitive uniform
+stability bounds \cite{feldman2019high,bousquet2020sharpening}.  Hardt,
+Recht, and Singer connect stability to optimization dynamics
+\cite{hardt2016train}.  The present paper is orthogonal to this line: our goal
+is not a sharper generalization bound but a precise understanding of how
+perturbation operations differ at the level of individual finite samples.
+Classical stability usually studies replace-one or delete-one perturbations
+under expected or fresh-test evaluation, whereas this paper separates
+perturbation semantics from evaluation semantics on fixed finite metric
+samples.
 
 \subsection{Nearest-neighbor classification and deleted estimates}
 
@@ -41,9 +34,11 @@ distribution-free deleted-estimate inequalities of Devroye and Wagner
 important precedents because they show that leave-one-out style evaluation has a
 substantial classical history around nearest-neighbor methods.  Even so, their
 goal is not to separate LOO from adversarial replace-one at the level of fixed
-finite metric witnesses with explicit deterministic tie-breaking.
+finite metric witnesses.  Deleted estimates and LOO-style analyses are
+historically important for nearest-neighbor rules, but they do not isolate the
+fixed-sample adversarial replacement gap studied here.
 
-\subsection{Leave-one-out, replace-one, and conformal stability certificates}
+\subsection{LOO, cross-validation, and conformal stability}
 
 Kearns and Ron connect algorithmic stability with leave-one-out
 cross-validation, already emphasizing that a CV-style perturbation has its own
@@ -51,32 +46,9 @@ logic \cite{kearns1999algorithmic}.  Recent conformal-prediction work makes
 related distinctions operational again, often in service of coverage
 certificates rather than 0--1 prediction loss.  Examples include transductive
 stability analyses and training-conditional or stable conformal guarantees
-\cite{ndiaye2022stability,liang2023learning,pournaderi2024training,lee2025framework}.  We cite this line not because our paper is a conformal-prediction
-paper, but because it reinforces the message that leave-one-out style control
-and replacement-based control can lead to different guarantees.  Our setting is
-more concrete and more local: deterministic k-NN on finite metric spaces with
-explicit top-$k$ neighbor ordering.
-
-\subsection{Finite metric witnesses and local learning rules}
-
-Metric-space analyses of k-NN typically appear in consistency or geometric
-generality results rather than perturbation-separation examples
-\cite{collins2020consistency}.  We did not identify, in the sources inspected
-for this draft, a prior finite graph-metric example whose explicit purpose is to
-show that fixed-sample LOO stability need not control fixed-sample adversarial
-replace-one stability for deterministic 1-NN under the conventions used here.
-This absence is not enough to justify a sweeping novelty claim.  It does,
-however, support a careful contribution statement: the paper's distinctive value
-lies in combining definition hygiene, explicit deterministic k-NN perturbation
-analysis, and a reproducible finite witness/certificate pipeline.
-
-\paragraph{What this paper does not claim.}
-We do not claim a new generalization bound, a contradiction to classical
-consistency results, or a theorem-level odd-$k$ lifting result from current
-computational candidates alone.  The paper's main ambition is narrower and, we
-think, cleaner: to make precise which one-sample perturbations are being
-discussed, how they interact at the uniform level, and how sharply they can
-separate at the pointwise finite-metric level for deterministic nearest
-neighbors.
-
-\input{outputs/tables/related_work_map.tex}
+\cite{liang2023algorithmic,pournaderi2024training}.  We cite this line because it
+reinforces the message that leave-one-out style control and replacement-based
+control can lead to different guarantees.  Our setting is more concrete and
+more local: deterministic $k$-NN on finite metric spaces with explicit top-$k$
+neighbor ordering.  The key message from this literature that carries into our
+paper is: LOO is not wrong, it answers a different question.

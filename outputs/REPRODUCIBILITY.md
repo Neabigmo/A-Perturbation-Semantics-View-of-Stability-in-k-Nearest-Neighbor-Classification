@@ -72,7 +72,9 @@ D:\texlive\2025\bin\windows\latexmk.exe -pdf -output-directory=paper paper\main.
 
 Current status:
 
-- `paper/main.pdf` builds successfully
+- the current paper source still builds successfully
+- the active reading copy is the repository-root `main.pdf`
+- the last archived paper build copy is stored under `archive/build/paper_main/`
 - bibliography now resolves for the current related-work pass
 - current warning level is low; one overfull hbox remains in the related-work section
 

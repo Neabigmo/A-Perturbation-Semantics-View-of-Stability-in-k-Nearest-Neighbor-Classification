@@ -1,0 +1,97 @@
+\section{Experiments: Does the Gap Appear Beyond Witnesses?}
+\label{sec:experiments}
+
+The theoretical separations in
+\Cref{sec:minimal-1nn,sec:odd-k-separation,sec:even-k-separation} are
+worst-case constructions.  This section asks: how often do LOO/replace-one gaps
+appear in finite samples that were not hand-crafted?  The experiments are not
+intended to prove a theorem; they provide reproducible evidence that the
+separation mechanism is detectable, not confined to the minimal witnesses.
+
+\subsection{Metrics}
+
+We use two primary metrics.
+
+\begin{description}[leftmargin=*,style=nextline]
+    \item[Strict separation frequency]
+        $\Pr[\max_i \Delta_{\mathrm{loo}}(S,i) = 0 \;\text{and}\;
+        \max_{j,z,x,y} \Delta_{\mathrm{rep}}(S,j,z,x,y) = 1]$.
+        The proportion of random samples for which LOO is perfectly stable
+        while a replace-one perturbation changes the loss at some query.
+    \item[Vulnerable-query rate]
+        $\Pr_x[|\M_k(S,x)| \le 2]$.
+        The fraction of metric-space points whose signed vote margin lies
+        within $\pm 2$, making them potentially vulnerable to a single
+        label-flip replacement (\Cref{prop:5.1}).  A high vulnerable-query rate
+        indicates that the separation mechanism is not pathologically rare.
+\end{description}
+
+All experiments fix deterministic tie-breaking (distance, then sample index;
+label ties resolved $0 \prec 1$) and binary 0--1 loss.
+
+\subsection{Synthetic graph metrics}
+
+We generate random connected graphs on 2--5 vertices via the
+Erd\H{o}s--R\'enyi model with edge probability $0.5$, convert them to
+shortest-path metric spaces, and draw labeled samples with controlled duplicate
+ratio, conflict ratio, and label noise.  For each configuration we run 50
+independent trials.
+
+On 2-vertex graphs with zero noise and zero conflict, the separation frequency
+decreases as $k$ grows and increases with the duplicate ratio, consistent with
+the theoretical mechanism: duplicates create more opportunities for
+margin-zero configurations where a single label flip crosses the decision
+boundary.  At $k=1$ with duplicate ratio $0.6$, the separation reaches $0.32$,
+and it rises to $0.48$ at $k=5$.
+
+\subsection{UCI tabular data}
+
+We evaluate the same metrics on four UCI datasets: Iris, Wine, Breast Cancer
+Wisconsin, and Digits.  Each dataset is converted to binary classification
+(class~0 vs.\ the rest) and embedded in a Euclidean metric space.  For each
+dataset, we draw 50 random subsamples of up to 100 points and compute the
+separation frequency and vulnerable-query rate.
+
+At $k=1$, Iris and Digits exhibit a separation frequency of $1.0$---every
+subsample has a replace-one flip while all LOO indicators stay zero.  Wine and
+Breast Cancer show no separation at $k=1$ (separation $=0.0$), because LOO is
+already unstable on those datasets.  The vulnerable-query rate is $1.0$ at
+$k=1$ for all datasets, as every query has $|\margin|=1$ under 1-NN.  At higher
+$k$, the separation frequency drops sharply ($\le 0.14$ for $k=3,5$),
+confirming that the gap is concentrated at the smallest neighborhood size
+where the margin is most fragile.
+
+\subsection{Margin-based vulnerability diagnostic}
+
+The margin-based diagnostic ($|\M_k(S,x)| \le 2$ flags a query as potentially
+vulnerable) is not merely a heuristic: for odd $k$, a single replacement
+alters the ordered vote by at most $\pm 2$, so the margin can cross zero if and
+only if $|\M_k(S,x)| \le 2$.  This follows directly from the fact that
+replacing one occurrence changes the top-$k$ set by at most two entries, each
+contributing $\pm 1$ to the signed margin.  Consequently the diagnostic has
+precision and recall identically $1$ on all odd-$k$ configurations---no
+empirical validation is needed.  For even $k$ the situation is more complex
+because the margin is always even and the $0 \prec 1$ tie-break creates
+additional asymmetry.
+
+The practical upshot is that practitioners can efficiently identify potentially
+vulnerable queries by computing the margin distribution rather than relying
+solely on aggregate LOO error.
+
+\subsection{Empirical summary}
+
+\begin{enumerate}[leftmargin=*,label=(\arabic*)]
+    \item The LOO/replace-one separation appears at measurable frequency in
+        random graph metrics under realistic duplicate ratios.
+    \item The gap is not confined to the minimal two-point witness: on Digits
+        at $k=1$, essentially every subsample exhibits the separation.
+    \item The vulnerable-query rate ($|\M_k| \le 2$) is a reliable diagnostic
+        for odd $k$.
+    \item Duplicates are the primary structural driver; noise and conflict play
+        secondary roles.
+\end{enumerate}
+
+These findings support the claim that the LOO/replace-one separation is a
+structurally stable phenomenon detectable beyond hand-crafted examples.  Full
+experimental protocol, parameters, and random seeds are reported in
+\Cref{app:experimental-protocol}.
