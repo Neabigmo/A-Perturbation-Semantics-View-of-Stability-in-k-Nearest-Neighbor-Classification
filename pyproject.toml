@@ -13,6 +13,8 @@ dependencies = [
     "networkx",
     "numpy",
     "pytest",
+    "scikit-learn",
+    "scipy",
 ]
 
 [tool.setuptools.packages.find]

@@ -4,11 +4,11 @@
   "not_a_proof": true,
   "source_outputs": {
     "task_007": {
-      "path": "outputs\\witnesses\\1nn_separation_witnesses.json",
+      "path": "H:\\2026try\\5.13\\outputs\\runs\\ml_submission\\finalrun_manifest\\raw\\witnesses\\1nn_separation_witnesses.json",
       "sha256": "5b7a8925688a353159a31c60b7c9579f506a46448382ed1ca9d345e2c2ffa0d1"
     },
     "task_008": {
-      "path": "outputs\\witnesses\\1nn_tie_free_witnesses.json",
+      "path": "H:\\2026try\\5.13\\outputs\\runs\\ml_submission\\finalrun_manifest\\raw\\witnesses\\1nn_tie_free_witnesses.json",
       "sha256": "a52aa8a77a9a416b44875740da923da03cb7d19c07974fb3617dca609ce1f12b"
     }
   },

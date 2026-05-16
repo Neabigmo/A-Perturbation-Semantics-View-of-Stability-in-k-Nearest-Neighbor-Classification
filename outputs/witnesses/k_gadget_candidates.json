@@ -32,10 +32,10 @@
       "tie_breaking": "distance then sample index; label ties favor 0"
     },
     "candidate_limit": {
-      "max_candidates_per_k": 3,
+      "max_candidates_per_k": 10,
       "limits_are_search_controls_not_mathematical_claims": true
     },
-    "reproducibility_command": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe experiments\\search_k_gadgets.py --k_values 3 5 7 --min_vertices 2 --max_vertices 2 --length_modes equal_k --max_candidates_per_k 3",
+    "reproducibility_command": "E:\\anaconda3\\envs\\pytorch-clean\\python.exe experiments\\search_k_gadgets.py --k_values 3 5 7 --min_vertices 2 --max_vertices 2 --length_modes equal_k --max_candidates_per_k 10",
     "stability_target": {
       "loo": "fixed-sample maximum over delete indices",
       "replace_one": "fixed-sample maximum over replacement indices, replacements in X x {0,1}, and evaluation labels"
@@ -50,14 +50,14 @@
     "search_stats": {
       "graphs_evaluated": 1,
       "samples_evaluated_by_k": {
-        "3": 5,
-        "5": 14,
-        "7": 30
+        "3": 19,
+        "5": 28,
+        "7": 72
       },
       "candidates_by_k": {
-        "3": 3,
-        "5": 3,
-        "7": 3
+        "3": 10,
+        "5": 10,
+        "7": 10
       },
       "stopped_by_candidate_limit": {
         "3": true,
@@ -65,7 +65,7 @@
         "7": true
       }
     },
-    "num_candidates_found": 9
+    "num_candidates_found": 30
   },
   "candidates": [
     {
@@ -171,6 +171,244 @@
       "status": "candidate_pattern_not_a_proof"
     },
     {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        0,
+        1
+      ],
+      "labels": [
+        0,
+        1,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        1,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        1,
+        0
+      ],
+      "labels": [
+        0,
+        1,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        1,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        0,
+        0
+      ],
+      "labels": [
+        1,
+        0,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 1,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 3,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 3,
+      "sample_order": [
+        0,
+        0,
+        1
+      ],
+      "labels": [
+        1,
+        0,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 1,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
       "k": 5,
       "num_vertices": 2,
       "num_edges": 1,
@@ -271,6 +509,272 @@
         0,
         0,
         1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 5,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 5,
+      "sample_order": [
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        1,
+        0,
         1
       ],
       "loo_max": 0,
@@ -396,6 +900,300 @@
         0,
         0,
         1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "loo_max": 0,
+      "loo_witness_index": 0,
+      "replace_max": 1,
+      "replace_witness_index": 0,
+      "replace_witness_replacement_point": 0,
+      "replace_witness_replacement_label": 1,
+      "replace_witness_query_point": 0,
+      "replace_witness_query_label": 0,
+      "separation_gap": 1,
+      "status": "candidate_pattern_not_a_proof"
+    },
+    {
+      "k": 7,
+      "num_vertices": 2,
+      "num_edges": 1,
+      "adjacency_list": {
+        "0": [
+          1
+        ],
+        "1": [
+          0
+        ]
+      },
+      "sample_length": 7,
+      "sample_order": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "labels": [
+        0,
+        0,
+        0,
+        1,
+        0,
         1,
         1
       ],

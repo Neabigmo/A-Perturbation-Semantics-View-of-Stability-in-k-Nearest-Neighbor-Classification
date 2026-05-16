@@ -173,6 +173,11 @@ def main() -> int:
         default=ROOT / "experiments" / "configs" / "ml_submission.toml",
     )
     parser.add_argument("--timestamp", type=str, default=None)
+    parser.add_argument(
+        "--with-figures",
+        action="store_true",
+        help="Also run the optional manuscript figure renderer if experiments/nature_figures.py is present.",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -306,20 +311,22 @@ def main() -> int:
         ),
         manifest_entries,
     )
-    run_step(
-        "nature_figures",
-        build_command(
-            "experiments/nature_figures.py",
-            "--synthetic_json",
-            synthetic_json,
-            "--tabular_json",
-            tabular_json,
-            "--output_dir",
-            paths.rendered_figures,
-            python_executable=python_executable,
-        ),
-        manifest_entries,
-    )
+    figure_script = ROOT / "experiments" / "nature_figures.py"
+    if args.with_figures and figure_script.exists():
+        run_step(
+            "nature_figures",
+            build_command(
+                "experiments/nature_figures.py",
+                "--synthetic_json",
+                synthetic_json,
+                "--tabular_json",
+                tabular_json,
+                "--output_dir",
+                paths.rendered_figures,
+                python_executable=python_executable,
+            ),
+            manifest_entries,
+        )
     run_step(
         "generate_paper_tables",
         build_command(
