@@ -23,7 +23,9 @@ neighbor classifiers. The main implementation fixes:
 - `experiments/configs/`: full and smoke-test TOML configurations.
 - `tests/`: regression tests for the core definitions and witness behavior.
 - `data_tables/`: raw benchmark JSON files and CSV aggregate tables used for
-  the manuscript empirical summary.
+  the manuscript empirical summary, including the JMLR extension audit tables
+  (`jmlr_*.csv`) for minimality, continuous stress tests, real-data
+  diagnostics, runtime, margin distributions, and repair experiments.
 - `outputs_manifest/`: manifest, config, hashes, and reproducibility notes from
   the archived `ml_submission` run.
 - `docs/literature/LIT_TABLE.md`: literature-control table used by the table
@@ -93,6 +95,26 @@ scikit-learn: Iris, Wine, Breast Cancer, and Digits. The experiment converts
 these datasets to binary classification tasks as implemented in the script,
 uses seeded subsamples, and reports LOO/replace-one separation frequency and
 vulnerable-query rate.
+
+The JMLR extension audit tables extend the same reproducibility layer:
+
+- `jmlr_exhaustive_minimality_map.csv`: finite-range witness-status map
+  combining the saved 1-NN computational certificate with the theorem-level
+  odd/even-k witness regimes.
+- `jmlr_continuous_stress.csv`: Gaussian blob, two-moon, circle, and
+  anisotropic synthetic stress tests with controlled feature jitter.
+- `jmlr_real_data_extended.csv`: built-in real-data audit across Euclidean,
+  Manhattan, and cosine distances and `k in {1,3,5,7,9,11,15}`.
+- `jmlr_diagnostic_runtime.csv`: exhaustive replacement enumeration versus
+  margin-diagnostic runtime on tractable subsamples.
+- `jmlr_repair_experiment.csv`: margin-aware `k` selection compared with
+  minimum-LOO `k` selection.
+- `jmlr_margin_distribution.csv`: signed margin samples used for the margin
+  distribution and vulnerability-correlation figure.
+
+The manuscript figure renderer that produces Figures 6--9 lives with the
+manuscript scratch figures, not in this release package, but all numerical
+tables it consumes are included here.
 
 The archived benchmark artifacts in `data_tables/` come from:
 
