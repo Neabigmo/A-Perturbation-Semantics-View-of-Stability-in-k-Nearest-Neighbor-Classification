@@ -1,0 +1,1 @@
+This repository asset was generated in ChatGPT. The requested editable PPTX is attached in the conversation as `answer.pptx`. Direct binary upload through the current connector is not available in this session.
